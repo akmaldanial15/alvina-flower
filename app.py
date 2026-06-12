@@ -13,7 +13,8 @@ app.config['RECEIPT_UPLOAD_FOLDER'] = os.path.join('static', 'uploads', 'receipt
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['RECEIPT_UPLOAD_FOLDER'], exist_ok=True)
 app.secret_key = 'super_secret_alvina_key'
-DB_PATH = 'flower_shop.db'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, 'flower_shop.db')
 
 MYT = timezone(timedelta(hours=8))
 
