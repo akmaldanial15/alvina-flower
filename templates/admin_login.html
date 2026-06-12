@@ -1,0 +1,337 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .admin-login-wrapper {
+        min-height: calc(100vh - 120px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem 1.5rem;
+    }
+    
+    .admin-login-card {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        max-width: 900px;
+        overflow: hidden;
+        border-radius: 24px;
+        box-shadow: 0 25px 50px -12px rgba(230, 190, 205, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.70);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        transition: all 0.3s ease;
+    }
+
+    /* Left image panel */
+    .admin-login-image-side {
+        flex: 1.1;
+        background: url('/static/images/flower1.png') center/cover no-repeat;
+        min-height: 550px;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+    
+    .admin-login-image-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(42, 22, 34, 0.65) 0%, rgba(42, 22, 34, 0.1) 60%, transparent 100%);
+        display: flex;
+        align-items: flex-end;
+        padding: 2.5rem;
+    }
+    
+    .admin-login-branding {
+        color: white;
+        text-shadow: 0 4px 12px rgba(0,0,0,0.35);
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .admin-login-brand-name {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+    
+    .admin-login-brand-sub {
+        font-size: 1.05rem;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        opacity: 0.95;
+        margin-top: 6px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    /* Right form panel */
+    .admin-login-form-side {
+        flex: 1;
+        padding: 3.5rem 2.75rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.85);
+        transition: all 0.3s ease;
+    }
+    
+    .admin-login-header {
+        text-align: center;
+        margin-bottom: 2.25rem;
+    }
+    
+    .admin-login-title {
+        font-size: 2.2rem;
+        color: var(--text-main);
+        margin-bottom: 0.5rem;
+        font-family: 'Playfair Display', serif;
+        font-weight: 600;
+    }
+    
+    .admin-login-subtitle {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    
+    .admin-login-error {
+        background: #fee2e2;
+        color: #b91c1c;
+        padding: 12px;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        font-size: 0.9rem;
+        border: 1px solid #fca5a5;
+        animation: shake 0.4s ease;
+    }
+    
+    .admin-login-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .admin-login-field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .admin-login-label {
+        color: var(--text-main);
+        font-weight: 600;
+        font-size: 0.88rem;
+    }
+    
+    .admin-login-input {
+        padding: 14px 16px;
+        background: rgba(255,255,255,0.9);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+    
+    .admin-login-input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(216, 167, 177, 0.25);
+        background: #fff;
+    }
+    
+    .admin-login-submit {
+        margin-top: 0.5rem;
+        padding: 14px;
+        font-size: 1.05rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        border-radius: 50px;
+        background: var(--accent);
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(216, 167, 177, 0.4);
+    }
+    
+    .admin-login-submit:hover {
+        background: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(216, 167, 177, 0.6);
+    }
+    
+    .admin-login-submit:active {
+        transform: translateY(0);
+    }
+    
+    .admin-login-links {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--border);
+    }
+    
+    .admin-login-link {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .admin-login-link:hover {
+        color: var(--accent);
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-6px); }
+        75% { transform: translateX(6px); }
+    }
+
+    /* ═══ Premium Responsive Mobile Redesign ═══ */
+    @media (max-width: 768px) {
+        .admin-login-wrapper {
+            padding: 1rem;
+            min-height: calc(100vh - 80px);
+        }
+        
+        .admin-login-card {
+            flex-direction: column;
+            max-width: 440px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(230, 190, 205, 0.3);
+        }
+        
+        .admin-login-image-side {
+            min-height: 180px;
+            flex: none;
+            background-position: center 30%;
+        }
+        
+        .admin-login-image-overlay {
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(42, 22, 34, 0.8) 0%, rgba(42, 22, 34, 0.25) 100%);
+        }
+        
+        .admin-login-brand-name {
+            font-size: 1.8rem;
+        }
+        
+        .admin-login-brand-sub {
+            font-size: 0.9rem;
+            margin-top: 3px;
+        }
+        
+        .admin-login-form-side {
+            padding: 2.25rem 1.5rem;
+        }
+        
+        .admin-login-header {
+            margin-bottom: 1.75rem;
+        }
+        
+        .admin-login-title {
+            font-size: 1.8rem;
+        }
+        
+        .admin-login-subtitle {
+            font-size: 0.88rem;
+        }
+        
+        .admin-login-input {
+            padding: 12px 14px;
+            font-size: 0.95rem;
+        }
+        
+        .admin-login-submit {
+            padding: 12px;
+            font-size: 1rem;
+        }
+        
+        .admin-login-links {
+            flex-direction: row;
+            gap: 12px;
+            align-items: center;
+            padding-top: 1rem;
+        }
+        
+        .admin-login-link {
+            font-size: 0.82rem;
+        }
+    }
+</style>
+
+<main class="admin-login-wrapper animate-fade-in">
+    <div class="admin-login-card">
+        <!-- Left/Top Side: Beautiful Branding Image -->
+        <div class="admin-login-image-side">
+            <div class="admin-login-image-overlay">
+                <h2 class="admin-login-branding">
+                    <span class="admin-login-brand-name">Lvinas florist</span>
+                    <span class="admin-login-brand-sub">Floralz Best Ent</span>
+                </h2>
+            </div>
+        </div>
+
+        <!-- Right/Bottom Side: Login Form -->
+        <div class="admin-login-form-side">
+            <div class="admin-login-header">
+                <h1 class="admin-login-title">Admin Portal</h1>
+                <p class="admin-login-subtitle">Enter your credentials to access the dashboard.</p>
+            </div>
+            
+            {% if error %}
+                <div class="admin-login-error">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            <form method="POST" action="/secret-alvina-admin" class="admin-login-form">
+                <div class="admin-login-field-group">
+                    <label for="username" class="admin-login-label">Username</label>
+                    <input 
+                        id="username"
+                        type="text" 
+                        name="username"
+                        class="admin-login-input" 
+                        placeholder="Enter username" 
+                        required
+                    />
+                </div>
+                <div class="admin-login-field-group">
+                    <label for="password" class="admin-login-label">Password</label>
+                    <input 
+                        id="password"
+                        type="password" 
+                        name="password"
+                        class="admin-login-input" 
+                        placeholder="••••••••••••" 
+                        required
+                    />
+                </div>
+                
+                <button type="submit" class="admin-login-submit">
+                    Secure Login
+                </button>
+
+                <!-- Helpful Links -->
+                <div class="admin-login-links">
+                    <a href="#" class="admin-login-link" onclick="alert('Please contact the head manager to retrieve your ID.'); return false;">
+                        Forgot ID?
+                    </a>
+                    <a href="#" class="admin-login-link" onclick="alert('Password reset instructions have been disabled for security. Contact IT.'); return false;">
+                        Forgot Password?
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}

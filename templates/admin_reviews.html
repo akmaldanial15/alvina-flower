@@ -1,0 +1,356 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="add-product-page" style="max-width: 1000px;">
+
+    <!-- Breadcrumb -->
+    <div class="ap-breadcrumb animate-slide-down">
+        <a href="{{ url_for('admin_dashboard') }}" class="ap-breadcrumb-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Dashboard
+        </a>
+        <span class="ap-breadcrumb-sep">›</span>
+        <span class="ap-breadcrumb-current">Customer Reviews</span>
+    </div>
+
+    <!-- Header -->
+    <div class="ap-header animate-slide-down">
+        <div class="ap-header-content">
+            <div class="ap-header-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div>
+                <h1 class="ap-title">Customer Reviews & Sentiment</h1>
+                <p class="ap-subtitle">Manage reviews, add custom entries, and analyze customer sentiment.</p>
+            </div>
+            <button onclick="document.getElementById('addReviewModal').style.display='flex'" class="btn btn-primary" style="margin-left: auto;">
+                + Add Custom Review
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div style="display: flex; gap: 8px; margin-bottom: 2rem;">
+        <a href="{{ url_for('admin_homepage_stats') }}" class="btn btn-outline" style="text-decoration: none;">
+            📊 Hero Stats
+        </a>
+        <a href="{{ url_for('admin_trust_badges') }}" class="btn btn-outline" style="text-decoration: none;">
+            ✨ Trust Badges
+        </a>
+        <a href="{{ url_for('admin_reviews') }}" class="btn btn-primary" style="text-decoration: none;">
+            💬 Reviews
+        </a>
+        <div style="margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted);">
+            <span>Sentiment Analysis Engine:</span>
+            <div style="background: rgba(255,255,255,0.5); padding: 4px; border-radius: 8px; display: flex; gap: 4px; border: 1px solid var(--border);">
+                <a href="{{ url_for('admin_reviews', sentiment='simple') }}" class="btn {% if stats.type == 'simple' %}btn-primary{% else %}btn-outline{% endif %}" style="padding: 4px 12px; font-size: 0.75rem; border: none;">Simple</a>
+                <a href="{{ url_for('admin_reviews', sentiment='detailed') }}" class="btn {% if stats.type == 'detailed' %}btn-primary{% else %}btn-outline{% endif %}" style="padding: 4px 12px; font-size: 0.75rem; border: none;">Detailed Analysis</a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .stat-card-hover {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08), 0 5px 15px rgba(240, 160, 48, 0.1);
+            border-color: rgba(240, 160, 48, 0.4);
+        }
+        .stat-icon-wrapper {
+            width: 54px; height: 54px; 
+            border-radius: 16px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3));
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.5), 0 4px 10px rgba(0,0,0,0.03);
+            border: 1px solid rgba(255,255,255,0.5);
+            flex-shrink: 0;
+        }
+        .star-horiz-bg {
+            flex: 1;
+            height: 8px;
+            background: rgba(0,0,0,0.06);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        .star-horiz-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f0a030, #ffcf70);
+            border-radius: 10px;
+            box-shadow: 0 0 8px rgba(240, 160, 48, 0.4);
+            animation: slideRight 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            width: 0;
+        }
+        @keyframes slideRight { from { width: 0; opacity: 0; } to { opacity: 1; } }
+        .star-row {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+        }
+        .star-row:last-child {
+            margin-bottom: 0;
+        }
+        .star-label {
+            font-size: 0.78rem; font-weight: 700; color: var(--text-main); width: 30px;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .star-count {
+            font-size: 0.75rem; color: var(--text-muted); width: 25px; text-align: right; font-weight: 600;
+        }
+    </style>
+
+    <!-- Stats Strip -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+        
+        <!-- Total Reviews -->
+        <div class="glass-panel stat-card-hover" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+            <div class="stat-icon-wrapper">💬</div>
+            <div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">Total Reviews</div>
+                <div style="font-size: 2rem; font-weight: 800; font-family: 'Playfair Display', serif; line-height: 1;">{{ stats.total }}</div>
+            </div>
+            <div style="position: absolute; right: -10px; bottom: -10px; font-size: 5rem; opacity: 0.03; font-family: 'Playfair Display', serif;">#</div>
+        </div>
+
+        <!-- Featured Reviews -->
+        <div class="glass-panel stat-card-hover" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+            <div class="stat-icon-wrapper" style="background: linear-gradient(135deg, rgba(255,240,200,0.8), rgba(255,240,200,0.3)); border-color: rgba(240,160,48,0.2);">⭐</div>
+            <div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">Featured</div>
+                <div style="font-size: 2rem; font-weight: 800; font-family: 'Playfair Display', serif; line-height: 1; color: #b0751e;">{{ featured_count }}</div>
+            </div>
+        </div>
+
+        <!-- Average Rating -->
+        <div class="glass-panel stat-card-hover" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+            <div class="stat-icon-wrapper">📊</div>
+            <div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">Avg Rating</div>
+                <div style="font-size: 2rem; font-weight: 800; font-family: 'Playfair Display', serif; line-height: 1; color: {% if stats.avg_rating >= 4 %}#2e7d32{% elif stats.avg_rating >= 3 %}#d97706{% else %}#c62828{% endif %};">
+                    {{ stats.avg_rating }} <span style="font-size: 1rem; color: var(--text-muted); font-weight: 500;">/5</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Star Distribution -->
+        {% if stats.total > 0 %}
+        <div class="glass-panel stat-card-hover" style="padding: 1.2rem 1.5rem; display: flex; flex-direction: column; justify-content: center; grid-column: span auto; min-width: 250px;">
+            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">Distribution</div>
+            <div style="display: flex; flex-direction: column; width: 100%;">
+                {% for star in [5, 4, 3, 2, 1] %}
+                {% set max_count = stats.stars.values() | max %}
+                {% set count = stats.stars[star] %}
+                {% set width_pct = (count / stats.total * 100) if stats.total > 0 else 0 %}
+                <div class="star-row" title="{{ star }} Stars: {{ count }} reviews">
+                    <div class="star-label">{{ star }} <span style="color: #f0a030; font-size: 0.7rem;">★</span></div>
+                    <div class="star-horiz-bg">
+                        <div class="star-horiz-fill" style="width: {{ width_pct }}%;"></div>
+                    </div>
+                    <div class="star-count">{{ count }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if reviews %}
+    <!-- Reviews List -->
+    <div class="glass-panel" style="padding: 2rem;">
+        <h3 class="elegant-title" style="font-size: 1.3rem; margin-bottom: 1.5rem;">
+            All Reviews
+            <span style="font-size: 0.75rem; color: var(--text-muted); font-family: 'Inter', sans-serif; font-weight: 400; margin-left: 8px;">
+                Toggle the ⭐ to feature a review on the homepage
+            </span>
+        </h3>
+
+        {% for review in reviews %}
+        <div style="display: flex; gap: 1rem; align-items: flex-start; padding: 1.2rem; margin-bottom: 0.8rem; border-radius: 16px; border: 1px solid {% if review.is_featured %}rgba(240, 160, 48, 0.3){% else %}var(--border){% endif %}; background: {% if review.is_featured %}rgba(255, 245, 220, 0.3){% else %}rgba(255,255,255,0.3){% endif %}; transition: all 0.3s ease;">
+            
+            <!-- Avatar -->
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1rem; flex-shrink: 0;">
+                {{ review.customer_name[0] | upper }}
+            </div>
+
+            <!-- Content -->
+            <div style="flex: 1; min-width: 0;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap;">
+                    <span style="font-weight: 600; font-size: 0.95rem;">{{ review.customer_name }}</span>
+                    {% if review.sentiment_label %}
+                    <span style="padding: 2px 8px; border-radius: 20px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; 
+                        {% if 'Very Positive' in review.sentiment_label %}background: #e8f5e9; color: #1b5e20;
+                        {% elif 'Positive' in review.sentiment_label %}background: #e0f2f1; color: #00796b;
+                        {% elif 'Very Negative' in review.sentiment_label %}background: #ffebee; color: #b71c1c;
+                        {% elif 'Negative' in review.sentiment_label %}background: #fbe9e7; color: #d84315;
+                        {% else %}background: #f5f5f5; color: #616161;{% endif %}">
+                        {{ review.sentiment_label }}
+                    </span>
+                    {% endif %}
+                    {% if review.is_featured %}
+                    <span style="padding: 2px 8px; background: linear-gradient(135deg, #f0a030, #e8c060); color: #5a4010; font-size: 0.65rem; font-weight: 700; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.06em;">Featured</span>
+                    {% endif %}
+                    {% if review.occasion %}
+                    <span style="padding: 2px 8px; background: rgba(248,200,216,0.15); color: var(--accent); font-size: 0.65rem; font-weight: 600; border-radius: 20px;">{{ review.occasion }}</span>
+                    {% endif %}
+                </div>
+                <div style="color: #f0a030; font-size: 0.85rem; margin-bottom: 6px; letter-spacing: 1px;">
+                    {{ '★' * review.rating }}{{ '☆' * (5 - review.rating) }}
+                </div>
+                <!-- Keyword Highlights -->
+                {% if review.pos_words or review.neg_words %}
+                <div style="display: flex; gap: 4px; margin-bottom: 6px; flex-wrap: wrap;">
+                    {% for w in review.pos_words %}
+                    <span style="font-size: 0.65rem; background: #e8f5e9; color: #2e7d32; padding: 2px 6px; border-radius: 4px;">+ {{ w }}</span>
+                    {% endfor %}
+                    {% for w in review.neg_words %}
+                    <span style="font-size: 0.65rem; background: #ffebee; color: #c62828; padding: 2px 6px; border-radius: 4px;">- {{ w }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <p style="font-size: 0.88rem; color: var(--text-main); line-height: 1.6; margin-bottom: 6px;">
+                    "{{ review.review_text }}"
+                </p>
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                    {% if review.order_id %}
+                    <span style="font-size: 0.72rem; color: var(--text-muted);">Order: {{ review.order_id }}</span>
+                    {% endif %}
+                    <span style="font-size: 0.72rem; color: var(--text-muted);">{{ review.created_at }}</span>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="display: flex; gap: 6px; flex-shrink: 0; align-items: center;">
+                <form method="POST" action="{{ url_for('admin_toggle_review', id=review.id) }}">
+                    <button type="submit" class="btn btn-outline" style="padding: 8px 14px; font-size: 0.78rem; {% if review.is_featured %}background: rgba(240,160,48,0.1); border-color: rgba(240,160,48,0.3); color: #c08020;{% endif %}" title="{% if review.is_featured %}Remove from homepage{% else %}Feature on homepage{% endif %}">
+                        {% if review.is_featured %}⭐ Unfeature{% else %}☆ Feature{% endif %}
+                    </button>
+                </form>
+                <button onclick="openEditModal('{{ review.id }}', '{{ review.customer_name | replace("'", "\\'") }}', '{{ review.rating }}', '{{ review.occasion | replace("'", "\\'") if review.occasion else "" }}', '{{ review.review_text | replace("'", "\\'") | replace('\n', '\\n') }}')" class="btn btn-outline" style="padding: 8px 14px; font-size: 0.78rem;">
+                    ✏️ Edit
+                </button>
+                <form method="POST" action="{{ url_for('admin_delete_review', id=review.id) }}" onsubmit="return confirm('Delete this review permanently?')">
+                    <button type="submit" class="btn btn-outline" style="padding: 8px 12px; border-color: #e88; color: #c55;" title="Delete review">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="glass-panel" style="padding: 4rem 2rem; text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">💬</div>
+        <h3 class="elegant-title" style="font-size: 1.5rem; margin-bottom: 0.5rem;">No Reviews Yet</h3>
+        <p style="color: var(--text-muted); max-width: 400px; margin: 0 auto;">
+            Customer reviews will appear here once customers submit them after placing orders. Featured reviews will be displayed on the homepage.
+        </p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Add Custom Review Modal -->
+<div id="addReviewModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div class="glass-panel" style="width: 100%; max-width: 500px; padding: 2rem; position: relative; animation: slideInUp 0.3s ease;">
+        <button type="button" onclick="document.getElementById('addReviewModal').style.display='none'" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
+        <h3 class="elegant-title" style="font-size: 1.5rem; margin-bottom: 1.5rem;">Add Custom Review</h3>
+        
+        <form method="POST" action="{{ url_for('admin_add_review') }}">
+            <div class="form-group">
+                <label class="form-label">Reviewer Name</label>
+                <input type="text" name="customer_name" class="input-field" required placeholder="e.g. Jane Doe">
+            </div>
+            
+            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label">Rating</label>
+                    <select name="rating" class="input-field" required>
+                        <option value="5">5 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="2">2 Stars</option>
+                        <option value="1">1 Star</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label">Occasion <small style="font-weight: normal">(optional)</small></label>
+                    <input type="text" name="occasion" class="input-field" placeholder="e.g. Birthday">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Review Text</label>
+                <textarea name="review_text" class="input-field" rows="4" required placeholder="Enter the review..."></textarea>
+            </div>
+            
+            <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 1.5rem; cursor: pointer;">
+                <input type="checkbox" name="is_featured" checked>
+                <span style="font-size: 0.9rem; font-weight: 500;">Feature on Homepage instantly</span>
+            </label>
+
+            <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('addReviewModal').style.display='none'">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Review</button>
+            </div>
+        </form>
+    </div>
+    </div>
+</div>
+
+<!-- Edit Review Modal -->
+<div id="editReviewModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div class="glass-panel" style="width: 100%; max-width: 500px; padding: 2rem; position: relative; animation: slideInUp 0.3s ease;">
+        <button type="button" onclick="document.getElementById('editReviewModal').style.display='none'" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
+        <h3 class="elegant-title" style="font-size: 1.5rem; margin-bottom: 1.5rem;">Edit Review</h3>
+        
+        <form id="editReviewForm" method="POST" action="">
+            <div class="form-group">
+                <label class="form-label">Reviewer Name</label>
+                <input type="text" id="edit_customer_name" name="customer_name" class="input-field" required>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label">Rating</label>
+                    <select id="edit_rating" name="rating" class="input-field" required>
+                        <option value="5">5 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="2">2 Stars</option>
+                        <option value="1">1 Star</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label">Occasion <small style="font-weight: normal">(optional)</small></label>
+                    <input type="text" id="edit_occasion" name="occasion" class="input-field">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Review Text</label>
+                <textarea id="edit_review_text" name="review_text" class="input-field" rows="4" required></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('editReviewModal').style.display='none'">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openEditModal(id, name, rating, occasion, text) {
+    document.getElementById('editReviewForm').action = "/admin/reviews/edit/" + id;
+    document.getElementById('edit_customer_name').value = name;
+    document.getElementById('edit_rating').value = rating;
+    document.getElementById('edit_occasion').value = occasion;
+    document.getElementById('edit_review_text').value = text;
+    document.getElementById('editReviewModal').style.display = 'flex';
+}
+</script>
+
+{% endblock %}

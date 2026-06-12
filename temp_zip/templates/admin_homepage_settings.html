@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="add-product-page" style="max-width: 900px;">
+
+    <!-- Breadcrumb -->
+    <div class="ap-breadcrumb animate-slide-down">
+        <a href="{{ url_for('admin_dashboard') }}" class="ap-breadcrumb-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Dashboard
+        </a>
+        <span class="ap-breadcrumb-sep">›</span>
+        <span class="ap-breadcrumb-current">
+            {% if section == 'stats' %}Hero Stats{% elif section == 'badges' %}Trust Badges{% endif %}
+        </span>
+    </div>
+
+    <!-- Header -->
+    <div class="ap-header animate-slide-down">
+        <div class="ap-header-content">
+            <div class="ap-header-icon">
+                {% if section == 'stats' %}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+                {% else %}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                {% endif %}
+            </div>
+            <div>
+                <h1 class="ap-title">
+                    {% if section == 'stats' %}Hero Stats{% elif section == 'badges' %}Trust Badges{% endif %}
+                </h1>
+                <p class="ap-subtitle">
+                    {% if section == 'stats' %}Edit the statistics shown in the hero section{% else %}Edit the "Why Choose Lvina's" section badges{% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div style="display: flex; gap: 8px; margin-bottom: 2rem;">
+        <a href="{{ url_for('admin_homepage_stats') }}" class="btn {% if section == 'stats' %}btn-primary{% else %}btn-outline{% endif %}" style="text-decoration: none;">
+            📊 Hero Stats
+        </a>
+        <a href="{{ url_for('admin_trust_badges') }}" class="btn {% if section == 'badges' %}btn-primary{% else %}btn-outline{% endif %}" style="text-decoration: none;">
+            ✨ Trust Badges
+        </a>
+        <a href="{{ url_for('admin_reviews') }}" class="btn btn-outline" style="text-decoration: none;">
+            💬 Reviews
+        </a>
+    </div>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- HERO STATS EDITOR                      -->
+    <!-- ══════════════════════════════════════ -->
+    {% if section == 'stats' %}
+    <form method="POST" action="{{ url_for('admin_homepage_stats') }}">
+        <div class="glass-panel" style="padding: 2rem; margin-bottom: 2rem;">
+            <h3 class="elegant-title" style="font-size: 1.3rem; margin-bottom: 1.5rem;">
+                Current Stats
+                <span style="font-size: 0.75rem; color: var(--text-muted); font-family: 'Inter', sans-serif; font-weight: 400; margin-left: 8px;">
+                    These appear in the homepage hero section
+                </span>
+            </h3>
+
+            {% for stat in stats %}
+            <input type="hidden" name="stat_id" value="{{ stat.id }}">
+            <div style="display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 12px; align-items: end; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label">Label</label>
+                    <input type="text" name="label_{{ stat.id }}" value="{{ stat.label }}" class="input-field" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label">Value</label>
+                    <input type="text" name="value_{{ stat.id }}" value="{{ stat.value }}" class="input-field" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label">Order</label>
+                    <input type="number" name="sort_{{ stat.id }}" value="{{ stat.sort_order }}" class="input-field" style="width: 70px;" min="0">
+                </div>
+                <form method="POST" action="{{ url_for('admin_delete_stat', id=stat.id) }}" style="margin-bottom: 0;">
+                    <button type="submit" class="btn btn-outline" style="border-color: #e88; color: #c55; padding: 10px 14px;" title="Delete" onclick="return confirm('Delete this stat?')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                </form>
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Save Changes
+            </button>
+        </div>
+    </form>
+
+    <!-- Add New Stat -->
+    <div class="glass-panel" style="padding: 2rem;">
+        <h3 class="elegant-title" style="font-size: 1.2rem; margin-bottom: 1rem;">➕ Add New Stat</h3>
+        <form method="POST" action="{{ url_for('admin_add_stat') }}" style="display: flex; gap: 12px; align-items: end; flex-wrap: wrap;">
+            <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 150px;">
+                <label class="form-label">Label</label>
+                <input type="text" name="label" class="input-field" placeholder="e.g. Orders Completed" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 150px;">
+                <label class="form-label">Value</label>
+                <input type="text" name="value" class="input-field" placeholder="e.g. 1000+" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- TRUST BADGES EDITOR                    -->
+    <!-- ══════════════════════════════════════ -->
+    {% if section == 'badges' %}
+    <form method="POST" action="{{ url_for('admin_trust_badges') }}">
+        <div class="glass-panel" style="padding: 2rem; margin-bottom: 2rem;">
+            <h3 class="elegant-title" style="font-size: 1.3rem; margin-bottom: 1.5rem;">
+                Current Trust Badges
+                <span style="font-size: 0.75rem; color: var(--text-muted); font-family: 'Inter', sans-serif; font-weight: 400; margin-left: 8px;">
+                    "Why Choose Lvina's" section on homepage
+                </span>
+            </h3>
+
+            {% for badge in badges %}
+            <input type="hidden" name="badge_id" value="{{ badge.id }}">
+            <div style="background: rgba(248,200,216,0.05); padding: 1.2rem; border-radius: 16px; margin-bottom: 1rem; border: 1px solid var(--border);">
+                <div style="display: grid; grid-template-columns: 80px 1fr auto auto; gap: 12px; align-items: end;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">Emoji</label>
+                        <input type="text" name="icon_{{ badge.id }}" value="{{ badge.icon }}" class="input-field" style="text-align: center; font-size: 1.3rem;" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="title_{{ badge.id }}" value="{{ badge.title }}" class="input-field" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">Order</label>
+                        <input type="number" name="sort_{{ badge.id }}" value="{{ badge.sort_order }}" class="input-field" style="width: 70px;" min="0">
+                    </div>
+                    <form method="POST" action="{{ url_for('admin_delete_badge', id=badge.id) }}" style="margin-bottom: 0;">
+                        <button type="submit" class="btn btn-outline" style="border-color: #e88; color: #c55; padding: 10px 14px;" title="Delete" onclick="return confirm('Delete this badge?')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </form>
+                </div>
+                <div class="form-group" style="margin-bottom: 0; margin-top: 10px;">
+                    <label class="form-label">Description</label>
+                    <input type="text" name="desc_{{ badge.id }}" value="{{ badge.description }}" class="input-field" required>
+                </div>
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Save Changes
+            </button>
+        </div>
+    </form>
+
+    <!-- Add New Badge -->
+    <div class="glass-panel" style="padding: 2rem;">
+        <h3 class="elegant-title" style="font-size: 1.2rem; margin-bottom: 1rem;">➕ Add New Badge</h3>
+        <form method="POST" action="{{ url_for('admin_add_badge') }}">
+            <div style="display: grid; grid-template-columns: 80px 1fr; gap: 12px; margin-bottom: 12px;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label">Emoji</label>
+                    <input type="text" name="icon" class="input-field" placeholder="🌸" style="text-align: center; font-size: 1.3rem;" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label">Title</label>
+                    <input type="text" name="title" class="input-field" placeholder="e.g. Premium Quality" required>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label class="form-label">Description</label>
+                <input type="text" name="description" class="input-field" placeholder="A short description of this trust badge" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Badge</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

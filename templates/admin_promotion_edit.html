@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="animate-fade-in" style="padding: 2rem; max-width: 1000px; margin: 0 auto;">
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+        <div>
+            <h1 class="elegant-title" style="font-size: 2.8rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--text-main), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Edit Promotion</h1>
+            <p style="color: var(--text-muted); font-size: 1rem; font-weight: 500;">Update rules, discounts, and targeting settings.</p>
+        </div>
+        <a href="{{ url_for('admin_promotions') }}" class="btn btn-outline" style="border-radius: 100px; padding: 0.6rem 1.5rem; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">✕ Cancel</a>
+    </header>
+
+    <div class="glass-panel-premium">
+        <form action="{{ url_for('edit_promotion', id=promotion.id) }}" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 0;">
+            
+            <!-- Basic Info -->
+            <div class="ap-form-section">
+                <h3 class="ap-form-section-title">📝 Basic Information</h3>
+                <div class="ap-form-grid-2">
+                    <div class="ap-field">
+                        <label>Promotion Title *</label>
+                        <input type="text" name="title" value="{{ promotion.title }}" required>
+                    </div>
+                    <div class="ap-field">
+                        <label>Discount Display Text *</label>
+                        <input type="text" name="discount" value="{{ promotion.discount }}" required>
+                    </div>
+                </div>
+                <div class="ap-field" style="margin-top: 1rem;">
+                    <label>Description *</label>
+                    <textarea name="description" required rows="3">{{ promotion.description }}</textarea>
+                </div>
+            </div>
+
+            <!-- Promo Code & Discount -->
+            <div class="ap-form-section">
+                <h3 class="ap-form-section-title">🏷️ Promo Code & Discount</h3>
+                <div class="ap-form-grid-3">
+                    <div class="ap-field">
+                        <label>Promo Code</label>
+                        <div class="ap-code-input-wrap">
+                            <input type="text" name="promo_code" id="promoCodeFieldEdit" value="{{ promotion.promo_code or '' }}" style="text-transform: uppercase;" placeholder="e.g. ALV-SPRING15">
+                            <button type="button" class="ap-generate-btn" onclick="generateCodeEdit()" title="Auto-generate a unique code">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                                Generate
+                            </button>
+                        </div>
+                    </div>
+                    <div class="ap-field">
+                        <label>Discount Type</label>
+                        <select name="discount_type">
+                            <option value="percentage" {% if promotion.discount_type == 'percentage' %}selected{% endif %}>Percentage (%)</option>
+                            <option value="fixed" {% if promotion.discount_type == 'fixed' %}selected{% endif %}>Fixed Amount (RM)</option>
+                        </select>
+                    </div>
+                    <div class="ap-field">
+                        <label>Discount Value</label>
+                        <input type="number" name="discount_value" step="0.01" min="0" value="{{ promotion.discount_value or 0 }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule -->
+            <div class="ap-form-section">
+                <h3 class="ap-form-section-title">📅 Schedule</h3>
+                <div class="ap-form-grid-2">
+                    <div class="ap-field">
+                        <label>Start Date</label>
+                        <input type="date" name="start_date" value="{{ promotion.start_date or '' }}">
+                    </div>
+                    <div class="ap-field">
+                        <label>End Date</label>
+                        <input type="date" name="end_date" value="{{ promotion.end_date or '' }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Targeting -->
+            <div class="ap-form-section">
+                <h3 class="ap-form-section-title">🎯 Targeting</h3>
+                <div class="ap-form-grid-3">
+                    <div class="ap-field">
+                        <label>Applies To</label>
+                        <select name="applies_to" onchange="toggleTargetingEdit(this.value)">
+                            <option value="all" {% if not promotion.applies_to or promotion.applies_to == 'all' %}selected{% endif %}>All Products</option>
+                            <option value="category" {% if promotion.applies_to == 'category' %}selected{% endif %}>Specific Categories</option>
+                            <option value="products" {% if promotion.applies_to == 'products' %}selected{% endif %}>Specific Products</option>
+                        </select>
+                    </div>
+                    <div class="ap-field" id="catFieldEdit" style="display:{% if promotion.applies_to == 'category' %}flex{% else %}none{% endif %};">
+                        <label>Target Categories</label>
+                        <select name="target_categories" multiple style="min-height: 80px;">
+                            {% set current_cats = (promotion.target_categories or '').split(',') %}
+                            {% for cat in categories %}
+                            <option value="{{ cat.category }}" {% if cat.category in current_cats %}selected{% endif %}>{{ cat.category }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="ap-field" id="prodFieldEdit" style="display:{% if promotion.applies_to == 'products' %}flex{% else %}none{% endif %};">
+                        <label>Target Products</label>
+                        <select name="target_product_ids" multiple style="min-height: 80px;">
+                            {% set current_pids = (promotion.target_product_ids or '').split(',') %}
+                            {% for prod in products_list %}
+                            <option value="{{ prod.id }}" {% if prod.id|string in current_pids %}selected{% endif %}>{{ prod.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ap-form-section">
+                <h3 class="ap-form-section-title">⚙️ Limits & Settings</h3>
+                <div class="ap-form-grid-3">
+                    <div class="ap-field">
+                        <label>Max Uses</label>
+                        <input type="number" name="max_uses" min="1" value="{{ promotion.max_uses or '' }}" placeholder="∞">
+                    </div>
+                    <div class="ap-field">
+                        <label>Min Order (RM)</label>
+                        <input type="number" name="min_order_amount" step="0.01" min="0" value="{{ promotion.min_order_amount or 0 }}">
+                    </div>
+                    <div class="ap-field">
+                        <label>Max Discount (RM)</label>
+                        <input type="number" name="max_discount_amount" step="0.01" min="0" value="{{ promotion.max_discount_amount or '' }}" placeholder="∞">
+                    </div>
+                </div>
+                <div class="ap-form-grid-2" style="margin-top: 1rem;">
+                    <div class="ap-field">
+                        <label>Sort Order</label>
+                        <input type="number" name="sort_order" value="{{ promotion.sort_order or 0 }}" min="0">
+                    </div>
+                    <div class="ap-field">
+                        <label>Times Used</label>
+                        <div style="padding: 0.7rem 1rem; border-radius: 12px; background: rgba(248,200,216,0.1); border: 1px solid var(--border); font-weight: 600; color: var(--text-main);">
+                            {{ promotion.times_used or 0 }} times
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual -->
+            <div class="ap-form-section">
+                <h3 class="ap-form-section-title">🖼️ Visual</h3>
+                <div class="ap-form-grid-2">
+                    <div class="ap-field">
+                        <label>Banner Image</label>
+                        {% if promotion.banner_image %}
+                        <img src="{{ promotion.banner_image }}" alt="Banner" style="max-height: 80px; border-radius: 8px; margin-bottom: 0.5rem; object-fit: cover;">
+                        {% endif %}
+                        <input type="file" name="banner_image" accept="image/*">
+                    </div>
+                    <div class="ap-field">
+                        <label>Banner Color</label>
+                        <input type="text" name="banner_color" value="{{ promotion.banner_color or '' }}" placeholder="e.g. #f8c8d8">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toggles + Submit -->
+            <div style="display: flex; flex-direction: column; gap: 2rem; margin-top: 1rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                    
+                    <div class="toggle-wrap">
+                        <div class="toggle-label">
+                            <span class="toggle-title">Promotion is Active</span>
+                            <span class="toggle-desc">Turn this on to enable the discount code at checkout.</span>
+                        </div>
+                        <label class="premium-toggle">
+                            <input type="checkbox" name="is_active" {% if promotion.is_active %}checked{% endif %}>
+                            <span class="premium-toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-wrap">
+                        <div class="toggle-label">
+                            <span class="toggle-title">Visible on Storefront</span>
+                            <span class="toggle-desc">Advertise this code directly on applicable product pages.</span>
+                        </div>
+                        <label class="premium-toggle">
+                            <input type="checkbox" name="is_public" {% if promotion.is_public %}checked{% endif %}>
+                            <span class="premium-toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                </div>
+                
+                <div style="display: flex; justify-content: flex-end; padding-top: 2rem; border-top: 1px solid rgba(248,200,216,0.3);">
+                    <button type="submit" class="premium-save-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        Save Promotion Changes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+<style>
+.glass-panel-premium {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 28px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.04), inset 0 0 0 1px rgba(255,255,255,0.8);
+    overflow: hidden;
+    padding: 3rem;
+}
+.ap-form-section { 
+    padding: 2.5rem; 
+    margin-bottom: 2rem;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(200, 150, 170, 0.05);
+    border: 1px solid rgba(248,200,216,0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.ap-form-section:last-of-type { margin-bottom: 0; }
+.ap-form-section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(200, 150, 170, 0.1);
+}
+.ap-form-section-title { 
+    display: flex; align-items: center; gap: 10px;
+    font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 2rem; 
+    border-bottom: 1px solid rgba(248,200,216,0.2); padding-bottom: 1rem;
+}
+.ap-form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.ap-form-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+.ap-form-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+.ap-field { display: flex; flex-direction: column; gap: 0.6rem; position: relative; }
+.ap-field label { 
+    font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; 
+}
+.ap-field input, .ap-field textarea, .ap-field select {
+    padding: 0.9rem 1.2rem; border-radius: 14px;
+    border: 2px solid rgba(248,200,216,0.2); background: #fcfcfc;
+    font-family: inherit; font-size: 0.95rem; color: var(--text-main);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); outline: none;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
+}
+.ap-field input:focus, .ap-field textarea:focus, .ap-field select:focus {
+    background: #ffffff;
+    border-color: var(--primary); box-shadow: 0 0 0 4px rgba(248,200,216,0.15), inset 0 2px 4px rgba(0,0,0,0.01);
+    transform: translateY(-1px);
+}
+
+/* Custom Toggle Switch */
+.premium-toggle {
+    position: relative;
+    display: inline-block;
+    width: 52px; height: 28px;
+    margin: 0;
+}
+.premium-toggle input { opacity: 0; width: 0; height: 0; }
+.premium-toggle-slider {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(200,150,170,0.25); transition: .4s; border-radius: 34px;
+}
+.premium-toggle-slider:before {
+    position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px;
+    background-color: white; transition: .4s; border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.premium-toggle input:checked + .premium-toggle-slider { background-color: var(--primary); }
+.premium-toggle input:checked + .premium-toggle-slider:before { transform: translateX(24px); }
+
+.toggle-wrap {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.5rem; background: #ffffff; border-radius: 16px; 
+    border: 1px solid rgba(248,200,216,0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.toggle-wrap:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(200,150,170,0.1); }
+.toggle-label { display: flex; flex-direction: column; gap: 6px; padding-right: 1rem; }
+.toggle-title { font-weight: 700; color: var(--text-main); font-size: 1rem; }
+.toggle-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
+
+/* Code input with generate button */
+.ap-code-input-wrap {
+    display: flex; gap: 0; border-radius: 14px; overflow: hidden;
+    border: 2px solid rgba(248,200,216,0.2); transition: all 0.3s ease;
+    background: #fcfcfc;
+}
+.ap-code-input-wrap:focus-within {
+    border-color: var(--primary); box-shadow: 0 0 0 4px rgba(248,200,216,0.15); background: #ffffff;
+    transform: translateY(-1px);
+}
+.ap-code-input-wrap input {
+    flex: 1; border: none !important; border-radius: 0 !important;
+    box-shadow: none !important; background: transparent;
+}
+.ap-generate-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 0 24px; white-space: nowrap;
+    background: linear-gradient(135deg, var(--primary), #e8a0b8);
+    color: white; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+    border: none; cursor: pointer; transition: all 0.3s ease;
+}
+.ap-generate-btn:hover { filter: brightness(1.1); box-shadow: -4px 0 15px rgba(248,200,216,0.4); }
+
+.premium-save-btn {
+    background: linear-gradient(135deg, var(--primary), #d47094);
+    color: white; padding: 1.1rem 3rem; border-radius: 100px;
+    font-weight: 700; font-size: 1rem; border: none; cursor: pointer;
+    box-shadow: 0 8px 25px rgba(248,200,216,0.5); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex; align-items: center; gap: 8px;
+}
+.premium-save-btn:hover {
+    transform: translateY(-4px); box-shadow: 0 12px 35px rgba(248,200,216,0.7); filter: brightness(1.05);
+}
+
+@media (max-width: 768px) {
+    .ap-form-grid-2, .ap-form-grid-3, .ap-form-grid-4 { grid-template-columns: 1fr; }
+    .glass-panel-premium { padding: 1.5rem; }
+    .ap-form-section { padding: 1.5rem; }
+}
+</style>
+
+<script>
+function toggleTargetingEdit(value) {
+    document.getElementById('catFieldEdit').style.display = value === 'category' ? 'flex' : 'none';
+    document.getElementById('prodFieldEdit').style.display = value === 'products' ? 'flex' : 'none';
+}
+
+async function generateCodeEdit() {
+    const input = document.getElementById('promoCodeFieldEdit');
+    try {
+        const res = await fetch('/admin/promotions/generate-code');
+        const data = await res.json();
+        input.value = data.code;
+        input.style.borderColor = '#22c55e';
+        input.style.background = 'rgba(34,197,94,0.06)';
+        setTimeout(() => { input.style.borderColor = ''; input.style.background = ''; }, 1500);
+    } catch (e) {
+        input.value = 'ALV-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+    }
+}
+</script>
+{% endblock %}

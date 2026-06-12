@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="animate-fade-in" style="min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 2rem;">
+    
+    <div class="glass-panel" style="display: flex; flex-direction: row; width: 100%; max-width: 900px; padding: 0; overflow: hidden; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(230, 190, 205, 0.4);">
+        
+        <!-- Left Side: Beautiful Image -->
+        <div style="flex: 1; background: url('/static/images/flower1.png') center/cover no-repeat; min-height: 500px; position: relative;">
+            <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.4), transparent); display: flex; align-items: flex-end; padding: 2rem;">
+                <h2 class="elegant-title" style="color: white; font-size: 2.5rem; text-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; flex-direction: column;">
+                    <span>Lvinas florist & gifts</span>
+                    <span style="font-size: 1.2rem; font-family: 'Inter', sans-serif; font-weight: 500; opacity: 0.9; margin-top: 5px;">Floralz Best Ent</span>
+                </h2>
+            </div>
+        </div>
+
+        <!-- Right Side: Login Form -->
+        <div style="flex: 1; padding: 3rem 2.5rem; display: flex; flex-direction: column; justify-content: center; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);">
+            
+            <div style="text-align: center; margin-bottom: 2.5rem;">
+                <h1 class="elegant-title" style="font-size: 2.2rem; color: var(--text-main); margin-bottom: 0.5rem;">
+                    Admin Portal
+                </h1>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">
+                    Enter your credentials to access the dashboard.
+                </p>
+            </div>
+            
+            {% if error %}
+                <div style="background: #fee2e2; color: #b91c1c; padding: 10px; border-radius: 8px; margin-bottom: 1.5rem; text-align: center; font-size: 0.9rem; border: 1px solid #fca5a5;">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            <form method="POST" action="/secret-alvina-admin" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <div>
+                    <label class="form-label" style="color: var(--text-main); font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; display: block;">Username</label>
+                    <input 
+                        type="text" 
+                        name="username"
+                        class="input-field" 
+                        placeholder="Enter your administrative username" 
+                        style="padding: 14px 16px; background: rgba(255,255,255,0.9); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);"
+                        required
+                    />
+                </div>
+                <div>
+                    <label class="form-label" style="color: var(--text-main); font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; display: block;">Password</label>
+                    <input 
+                        type="password" 
+                        name="password"
+                        class="input-field" 
+                        placeholder="••••••••••••" 
+                        style="padding: 14px 16px; background: rgba(255,255,255,0.9); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);"
+                        required
+                    />
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem; padding: 14px; font-size: 1.1rem; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(248, 200, 216, 0.6);">
+                    Secure Login
+                </button>
+
+                <!-- Helpful Links -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <a href="#" onclick="alert('Please contact the head manager to retrieve your ID.'); return false;" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none; transition: color 0.3s; font-weight: 500;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">
+                        Forgot ID?
+                    </a>
+                    <a href="#" onclick="alert('Password reset instructions have been disabled for security. Contact IT.'); return false;" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none; transition: color 0.3s; font-weight: 500;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">
+                        Forgot Password?
+                    </a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</main>
+{% endblock %}

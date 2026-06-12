@@ -1,0 +1,996 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+/* ═══════════════════════════════════════════════
+   PREMIUM TRACK PAGE FOOTER BUTTONS
+   ═══════════════════════════════════════════════ */
+.track-footer-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 3rem;
+    padding: 1rem 0;
+    flex-wrap: wrap;
+    animation: fadeIn 0.8s ease-out 0.4s both;
+}
+
+.track-btn-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #fff !important;
+    background: linear-gradient(135deg, #b5446e 0%, #d4728e 50%, #eaa5bb 100%);
+    box-shadow: 0 8px 24px rgba(181, 68, 110, 0.25), inset 0 -2px 0 rgba(0,0,0,0.1);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.track-btn-home::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: translateX(-100%);
+    transition: 0.5s;
+}
+
+.track-btn-home:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 12px 30px rgba(181, 68, 110, 0.35), inset 0 -2px 0 rgba(0,0,0,0.15);
+}
+
+.track-btn-home:hover::before {
+    animation: shimmerSweep 1.5s infinite;
+}
+
+.track-btn-home:active {
+    transform: translateY(-1px);
+}
+
+.track-btn-browse {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #b5446e !important;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(181, 68, 110, 0.25);
+    box-shadow: 0 8px 20px rgba(181, 68, 110, 0.05);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: pointer;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.track-btn-browse:hover {
+    color: #fff !important;
+    background: linear-gradient(135deg, rgba(181, 68, 110, 0.8), rgba(212, 114, 142, 0.9));
+    border-color: transparent;
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 12px 28px rgba(181, 68, 110, 0.25);
+}
+
+.track-btn-browse:active {
+    transform: translateY(-1px);
+}
+
+/* Icons styling inside buttons */
+.track-btn-home svg,
+.track-btn-browse svg {
+    transition: transform 0.3s ease;
+}
+
+.track-btn-home:hover svg {
+    transform: translateX(-2px) scale(1.1);
+}
+
+.track-btn-browse:hover svg {
+    transform: rotate(10deg) scale(1.15);
+}
+
+@keyframes shimmerSweep {
+    0% { transform: translateX(-150%) skewX(-45deg); }
+    100% { transform: translateX(250%) skewX(-45deg); }
+}
+
+/* Custom details groups styling */
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+@media (max-width: 600px) {
+    .details-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+}
+.details-group-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: var(--shadow-sm);
+    text-align: left;
+}
+.details-group-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(181, 68, 110, 0.4);
+    box-shadow: var(--shadow-md);
+}
+.details-group-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1.5px solid rgba(181, 68, 110, 0.1);
+    padding-bottom: 0.6rem;
+}
+.details-item {
+    margin-bottom: 1rem;
+    font-size: 0.92rem;
+    line-height: 1.45;
+}
+.details-item:last-child {
+    margin-bottom: 0;
+}
+.details-label {
+    display: block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.details-value {
+    font-weight: 600;
+    color: var(--text-main);
+}
+.details-value.highlight {
+    color: #b5446e;
+    font-weight: 700;
+}
+
+/* Elegant Gift Card Envelope */
+.gift-card-envelope {
+    background: linear-gradient(135deg, #fffcfd 0%, #fdf6f8 100%);
+    border: 1px dashed rgba(181, 68, 110, 0.3);
+    border-radius: 24px;
+    padding: 2.2rem 2rem;
+    position: relative;
+    box-shadow: inset 0 0 30px rgba(181, 68, 110, 0.04), var(--shadow-sm);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+.gift-card-envelope:hover {
+    transform: translateY(-2px);
+    border-color: rgba(181, 68, 110, 0.6);
+    box-shadow: var(--shadow-md);
+}
+.gift-card-envelope::before {
+    content: '💌';
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 0.8rem;
+    opacity: 0.9;
+    animation: heartBeat 2.5s infinite;
+}
+@keyframes heartBeat {
+    0% { transform: scale(1); }
+    14% { transform: scale(1.1); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.1); }
+    70% { transform: scale(1); }
+}
+.gift-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 1.2rem;
+    letter-spacing: -0.01em;
+}
+.gift-card-message {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: #4a283d;
+    line-height: 1.65;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 1.2rem 1.5rem;
+    border-left: 2px solid rgba(181, 68, 110, 0.25);
+    border-right: 2px solid rgba(181, 68, 110, 0.25);
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(181, 68, 110, 0.02);
+}
+
+/* Premium WhatsApp Pulse Button */
+.track-whatsapp-btn-premium {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 16px 24px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+    color: white !important;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+.track-whatsapp-btn-premium:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(37, 211, 102, 0.35);
+}
+.track-whatsapp-btn-premium:active {
+    transform: translateY(-1px);
+}
+.track-whatsapp-btn-premium svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+    transition: transform 0.3s ease;
+}
+.track-whatsapp-btn-premium:hover svg {
+    transform: rotate(15deg) scale(1.1);
+}
+
+/* Timeline Polish Overrides */
+.track-timeline-icon.active {
+    background: linear-gradient(135deg, #b5446e 0%, #d4728e 100%) !important;
+}
+.track-timeline-icon.current {
+    background: linear-gradient(135deg, #b5446e 0%, #d4728e 100%) !important;
+    animation: trackTimelinePulse 2s ease-in-out infinite !important;
+    border: 3px solid white !important;
+    box-shadow: 0 0 0 4px rgba(181, 68, 110, 0.4), 0 6px 20px rgba(181, 68, 110, 0.3) !important;
+}
+.track-timeline-icon.inactive {
+    background: rgba(255, 255, 255, 0.4) !important;
+    border: 1.5px solid rgba(0, 0, 0, 0.06) !important;
+    color: var(--text-muted) !important;
+    opacity: 0.6 !important;
+    box-shadow: none !important;
+}
+.track-timeline-connector.active {
+    background: linear-gradient(90deg, #b5446e, #eaa5bb) !important;
+    height: 4px !important;
+}
+.track-timeline-connector.inactive {
+    background: rgba(0, 0, 0, 0.05) !important;
+    height: 4px !important;
+    opacity: 1 !important;
+}
+
+/* Premium Search Box */
+.track-search form {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 24px !important;
+    box-shadow: var(--shadow-md) !important;
+    transition: all 0.3s ease;
+}
+.track-search form:focus-within {
+    box-shadow: var(--shadow-lg) !important;
+    border-color: rgba(181, 68, 110, 0.2) !important;
+}
+.track-search-inner .input-field {
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem !important;
+    letter-spacing: 1.5px !important;
+    border: 1.5px solid var(--border) !important;
+    background: white !important;
+}
+.track-search-inner .input-field:focus {
+    border-color: #b5446e !important;
+    box-shadow: 0 0 0 4px rgba(181, 68, 110, 0.15) !important;
+}
+.track-search-btn {
+    background: linear-gradient(135deg, #b5446e 0%, #eaa5bb 100%) !important;
+    color: white !important;
+    font-weight: 700 !important;
+    box-shadow: 0 6px 18px rgba(181, 68, 110, 0.25) !important;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+.track-search-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 24px rgba(181, 68, 110, 0.35) !important;
+}
+
+/* Order ID Pill */
+.order-id-pill {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid var(--border);
+    padding: 6px 6px 6px 16px;
+    border-radius: 50px;
+    gap: 12px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+.order-id-pill:hover {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(181, 68, 110, 0.3);
+    box-shadow: var(--shadow-md);
+}
+.order-id-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    font-weight: 700;
+}
+.track-order-id {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: 0.5px;
+}
+.track-copy-btn {
+    border-radius: 50px !important;
+    padding: 6px 14px !important;
+}
+
+/* Custom Payment Status Box */
+.payment-status-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 1.25rem 1.75rem;
+    border-radius: 20px;
+    gap: 1rem;
+    flex-wrap: wrap;
+    text-align: left;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+@media (max-width: 600px) {
+    .payment-status-box {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
+.payment-status-box.unpaid {
+    border: 1px solid rgba(220, 53, 69, 0.2) !important;
+    background: rgba(220, 53, 69, 0.03) !important;
+}
+.payment-status-box.pending {
+    border: 1px solid rgba(245, 127, 23, 0.2) !important;
+    background: rgba(245, 127, 23, 0.03) !important;
+}
+.payment-status-box.paid {
+    border: 1px solid rgba(46, 125, 50, 0.2) !important;
+    background: rgba(46, 125, 50, 0.03) !important;
+}
+
+.payment-status-text {
+    font-size: 0.92rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.payment-status-text.unpaid { color: #dc3545; }
+.payment-status-text.pending { color: #f57f17; }
+.payment-status-text.paid { color: #2e7d32; }
+
+.payment-status-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Specific buttons inside status boxes */
+.status-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 50px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    border: none;
+}
+.status-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+}
+.status-action-btn.unpaid-primary {
+    background: linear-gradient(135deg, #dc3545 0%, #e4606d 100%);
+    color: white !important;
+}
+.status-action-btn.pending-primary {
+    background: linear-gradient(135deg, #f57f17 0%, #fbc02d 100%);
+    color: white !important;
+}
+.status-action-btn.paid-primary {
+    background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2) !important;
+}
+.status-action-btn.paid-primary:hover {
+    box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3) !important;
+}
+.status-action-btn.paid-outline {
+    background: white !important;
+    color: #2e7d32 !important;
+    border: 1.5px solid rgba(46, 125, 50, 0.3) !important;
+}
+.status-action-btn.paid-outline:hover {
+    background: rgba(46, 125, 50, 0.04) !important;
+    border-color: #2e7d32 !important;
+}
+
+/* Float status message emoji */
+.track-status-message .status-emoji {
+    animation: floatEmoji 3s ease-in-out infinite;
+}
+@keyframes floatEmoji {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+    100% { transform: translateY(0); }
+}
+</style>
+
+<main class="track-page">
+
+    <!-- ═══════════════════════════════════════════
+         HERO HEADER
+         ═══════════════════════════════════════════ -->
+    <div class="track-hero">
+        <h1>Track My Order</h1>
+        <p>Enter your order ID to check the status of your flowers</p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SEARCH FORM
+         ═══════════════════════════════════════════ -->
+    <div class="track-section track-search">
+        <form action="/track" method="get" class="glass-panel" style="padding: 1.5rem;">
+            <div class="track-search-inner">
+                <input 
+                    type="text" 
+                    name="id" 
+                    placeholder="e.g. 00001-A8X92JQK" 
+                    class="input-field"
+                    value="{{ order_id or '' }}"
+                />
+                <button type="submit" class="btn track-search-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    Track
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         ORDER FOUND — FULL DETAILS
+         ═══════════════════════════════════════════ -->
+    {% if order_id and order %}
+
+        {% set status_lower = order.status|lower %}
+        
+        <!-- Status Badge + Order ID -->
+        <div class="track-section track-section-anim glass-panel" style="padding: 1.5rem; text-align: center;">
+            
+            <!-- Status Badge -->
+            <div style="margin-bottom: 1rem;">
+                {% if status_lower == 'processing' %}
+                <span class="track-status-badge processing">🟡 Processing</span>
+                {% elif status_lower == 'shipped' %}
+                <span class="track-status-badge shipped">🔵 Shipped</span>
+                {% elif status_lower == 'delivered' %}
+                <span class="track-status-badge delivered">🟢 Delivered</span>
+                {% else %}
+                <span class="track-status-badge processing">{{ order.status }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Order ID Pill (Premium Glass container) -->
+            <div class="track-order-id-row" style="margin-top: 0.5rem; margin-bottom: 1.5rem;">
+                <div class="order-id-pill">
+                    <span class="order-id-label">Order ID</span>
+                    <span class="track-order-id">{{ order.id }}</span>
+                    <button class="track-copy-btn" id="copyOrderBtn" onclick="copyOrderId('{{ order.id }}')">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+            </div>
+
+            <!-- Personalized Status Message -->
+            <div class="track-status-message">
+                {% if status_lower == 'processing' %}
+                <span class="status-emoji">💐</span>
+                <span class="status-text">Your bouquet is being prepared with love!</span>
+                {% elif status_lower == 'shipped' %}
+                <span class="status-emoji">🚚</span>
+                <span class="status-text">On the way to brighten someone's day!</span>
+                {% elif status_lower == 'delivered' %}
+                <span class="status-emoji">🎉</span>
+                <span class="status-text">Successfully delivered — we hope it brought joy!</span>
+                {% endif %}
+            </div>
+
+            <!-- Visual Timeline -->
+            {% set steps = [
+                {'key': 'processing', 'label': 'Processing', 'icon': '📦'},
+                {'key': 'shipped', 'label': 'Shipped', 'icon': '🚚'},
+                {'key': 'delivered', 'label': 'Delivered', 'icon': '✅'}
+            ] %}
+            {% set status_order = {'processing': 0, 'shipped': 1, 'delivered': 2} %}
+            {% set current_idx = status_order.get(status_lower, 0) %}
+
+            <div class="track-timeline">
+                {% for step in steps %}
+                    {% set step_idx = loop.index0 %}
+                    {% set is_done = step_idx < current_idx %}
+                    {% set is_current = step_idx == current_idx %}
+                    {% set is_future = step_idx > current_idx %}
+
+                    <div class="track-timeline-step">
+                        <div class="track-timeline-icon {% if is_done %}active{% elif is_current %}current{% else %}inactive{% endif %}">
+                            {{ step.icon }}
+                        </div>
+                        <span class="track-timeline-label {% if is_future %}inactive{% endif %}">{{ step.label }}</span>
+
+                        {% if not loop.last %}
+                        <div class="track-timeline-connector {% if is_done %}active{% else %}inactive{% endif %}"></div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Payment Status Alert/Banner (Premium & Cohesive) -->
+            <div style="margin-top: 2rem; margin-bottom: 2rem; display: flex; justify-content: center; width: 100%;">
+                {% if order.payment_status == 'unpaid' %}
+                <div class="payment-status-box unpaid">
+                    <span class="payment-status-text unpaid">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        Unpaid: Payment proof is required to begin preparation.
+                    </span>
+                    <a href="/invoice/{{ order.id }}" class="status-action-btn unpaid-primary">
+                        💳 View Invoice & Pay
+                    </a>
+                </div>
+                {% elif order.payment_status == 'pending_verification' %}
+                <div class="payment-status-box pending">
+                    <span class="payment-status-text pending">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        Payment Verification Pending. We are verifying your transfer.
+                    </span>
+                    <a href="/invoice/{{ order.id }}" class="status-action-btn pending-primary">
+                        🔎 View Payment Proof
+                    </a>
+                </div>
+                {% elif order.payment_status == 'paid' %}
+                <div class="payment-status-box paid">
+                    <span class="payment-status-text paid">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                        Payment Verified: Official Receipt Issued.
+                    </span>
+                    <div class="payment-status-actions">
+                        <a href="/receipt/{{ order.id }}" class="status-action-btn paid-outline">
+                            🧾 View Official Receipt
+                        </a>
+                        <a href="/receipt/{{ order.id }}?print=true" target="_blank" class="status-action-btn paid-primary">
+                            📥 Download PDF
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <p class="track-date">Ordered on {{ order.created_at[:10] }}</p>
+        </div>
+
+        <!-- ═══════════════════════════════════════════
+             ORDER SUMMARY CARD
+             ═══════════════════════════════════════════ -->
+        {% if order_product %}
+        <div class="track-section track-section-anim" style="animation-delay: 0.15s;">
+            <div class="glass-panel" style="padding: 1.5rem;">
+                <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); font-weight: 600; margin-bottom: 0.8rem;">Order Summary</div>
+                <div class="track-product-card">
+                    <img src="{{ order_product.image }}" alt="{{ order_product.name }}" class="track-product-img">
+                    <div class="track-product-info">
+                        <div class="track-product-category">{{ order_product.category }}</div>
+                        <div class="track-product-name">{{ order_product.name }}</div>
+                        <div class="track-product-price">RM {{ '%.2f' % order.total_amount }}</div>
+                    </div>
+                    <a href="{{ url_for('product_detail', id=order_product.id) }}" class="btn btn-outline" style="padding: 8px 16px; font-size: 0.75rem; white-space: nowrap; text-decoration: none;">
+                        View →
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ═══════════════════════════════════════════
+             CUSTOMER & RECIPIENT DETAILS (PREMIUM GROUPED VIEW)
+             ═══════════════════════════════════════════ -->
+        {% if order.checkout_data %}
+        <div class="track-section track-section-anim" style="animation-delay: 0.20s;">
+            <div class="details-grid">
+                <!-- Recipient Card -->
+                <div class="details-group-card">
+                    <div class="details-group-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b5446e" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        Recipient Details
+                    </div>
+                    {% set recipient_name = order.checkout_data.get('recipient_name') or order.checkout_data.get('Recipient Name') %}
+                    {% set recipient_phone = order.checkout_data.get('recipient_phone') or order.checkout_data.get('Recipient Phone') %}
+                    
+                    <div class="details-item">
+                        <span class="details-label">Recipient Name</span>
+                        <span class="details-value">{{ recipient_name if recipient_name else '-' }}</span>
+                    </div>
+                    <div class="details-item">
+                        <span class="details-label">Recipient Phone</span>
+                        <span class="details-value" style="font-family: monospace; letter-spacing: 0.5px;">{{ recipient_phone if recipient_phone else '-' }}</span>
+                    </div>
+                </div>
+
+                <!-- Sender Card -->
+                <div class="details-group-card">
+                    <div class="details-group-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b5446e" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        Sender Details
+                    </div>
+                    {% set sender_name = order.checkout_data.get('sender_name') or order.checkout_data.get('Sender Name') %}
+                    {% set sender_phone = order.checkout_data.get('sender_phone') or order.checkout_data.get('Sender Phone') %}
+                    
+                    <div class="details-item">
+                        <span class="details-label">Sender Name</span>
+                        <span class="details-value">{{ sender_name if sender_name else '-' }}</span>
+                    </div>
+                    <div class="details-item">
+                        <span class="details-label">Sender Phone</span>
+                        <span class="details-value" style="font-family: monospace; letter-spacing: 0.5px;">{{ sender_phone if sender_phone else '-' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════
+             DELIVERY DETAILS (PREMIUM GRID)
+             ═══════════════════════════════════════════ -->
+        <div class="track-section track-section-anim" style="animation-delay: 0.23s;">
+            <div class="details-group-card" style="background: rgba(255, 255, 255, 0.95); border-radius: 20px;">
+                <div class="details-group-title" style="border-bottom: 1px solid rgba(181, 68, 110, 0.15);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b5446e" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                    Delivery Information
+                </div>
+                
+                {% set delivery_address = order.checkout_data.get('delivery_address') or order.checkout_data.get('Delivery Address') %}
+                {% set delivery_date = order.checkout_data.get('delivery_date') or order.checkout_data.get('Delivery Date') %}
+                {% set delivery_time = order.checkout_data.get('time_delivery_date') or order.checkout_data.get('Time Delivery Date') or order.checkout_data.get('delivery_time') or order.checkout_data.get('time_delivery') or order.checkout_data.get('delivery_time_slot') %}
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="details-item" style="grid-column: span 2;">
+                        <span class="details-label">Delivery Address</span>
+                        <span class="details-value" style="font-size: 0.95rem; line-height: 1.5;">{{ delivery_address if delivery_address else '-' }}</span>
+                    </div>
+                    
+                    <div class="details-item">
+                        <span class="details-label">Scheduled Date</span>
+                        <span class="details-value highlight" style="font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            {{ delivery_date if delivery_date else '-' }}
+                        </span>
+                    </div>
+                    
+                    {% if delivery_time %}
+                    <div class="details-item">
+                        <span class="details-label">Scheduled Time Slot</span>
+                        <span class="details-value highlight" style="font-size: 1rem; display: flex; align-items: center; gap: 8px; color: #b5446e;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            {{ delivery_time }}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════
+             GIFT CARD / MESSAGE (PREMIUM ENVELOPE)
+             ═══════════════════════════════════════════ -->
+        {% set card_message = order.checkout_data.get('card_message') or order.checkout_data.get('Card Message') %}
+        {% if card_message and card_message.strip() %}
+        <div class="track-section track-section-anim" style="animation-delay: 0.26s;">
+            <div class="gift-card-envelope">
+                <div class="gift-card-title">Greeting Card Message</div>
+                <div class="gift-card-message">
+                    "{{ card_message }}"
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ═══════════════════════════════════════════
+             ADDITIONAL CUSTOM SCHEMA DETAILS
+             ═══════════════════════════════════════════ -->
+        {% set handled_keys = ['sender_name', 'sender_phone', 'recipient_name', 'recipient_phone', 'delivery_address', 'delivery_date', 'card_message', 'time_delivery_date', 'delivery_time', 'delivery_time_slot', 'Time Delivery Date', 'Sender Name', 'Sender Phone', 'Recipient Name', 'Recipient Phone', 'Delivery Address', 'Delivery Date', 'Card Message'] %}
+        {% set ns = namespace(shown_title=false) %}
+        {% for key, value in order.checkout_data.items() %}
+            {% if key not in handled_keys and key|lower not in handled_keys and value %}
+                {% if not ns.shown_title %}
+                    <div class="track-section track-section-anim" style="animation-delay: 0.28s;">
+                        <div class="details-group-card" style="border-radius: 20px;">
+                            <div class="details-group-title" style="border-bottom: 1px solid rgba(181, 68, 110, 0.15); margin-bottom: 1.2rem;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b5446e" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                Additional Details
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            {% set ns.shown_title = true %}
+                {% endif %}
+                <div class="details-item">
+                    <span class="details-label">{{ key|replace('_', ' ')|title }}</span>
+                    <span class="details-value">{{ value }}</span>
+                </div>
+            {% endif %}
+        {% endfor %}
+        {% if ns.shown_title %}
+                            </div>
+                        </div>
+                    </div>
+        {% endif %}
+
+        {% endif %}
+
+        <!-- ═══════════════════════════════════════════
+             WHATSAPP QUICK CONTACT (PREMIUM SHIMMER)
+             ═══════════════════════════════════════════ -->
+        <div class="track-section track-section-anim" style="animation-delay: 0.30s;">
+            <a href="https://wa.me/60164839879?text=Hi%20Lvina's%20Florist!%20I%20have%20a%20question%20about%20my%20order%20{{ order.id }}" 
+               target="_blank" rel="noopener noreferrer" class="track-whatsapp-btn-premium">
+                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 0 0 .612.612l4.458-1.495A11.952 11.952 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.349 0-4.554-.767-6.354-2.073l-.443-.328-3.3 1.106 1.106-3.3-.328-.443A9.97 9.97 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                Questions about this order? Chat with us
+            </a>
+        </div>
+
+        <!-- ═══════════════════════════════════════════
+             REVIEW SUBMISSION FORM
+             ═══════════════════════════════════════════ -->
+        <div class="track-section track-section-anim" style="animation-delay: 0.35s;">
+            <div id="reviewSection" class="glass-panel" style="padding: 2rem; text-align: left;">
+                <h3 class="elegant-title" style="font-size: 1.4rem; margin-bottom: 0.3rem; text-align: center;">
+                    💬 Share Your Experience
+                </h3>
+                
+                {% if has_review %}
+                <div style="background: rgba(76,175,80,0.1); border: 1px solid rgba(76,175,80,0.3); border-radius: 16px; padding: 1.5rem; text-align: center; margin-top: 1rem;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎉</div>
+                    <p style="font-weight: 600; color: #2e7d32; margin-bottom: 0.3rem;">You've already reviewed this order!</p>
+                    <p style="font-size: 0.82rem; color: var(--text-muted);">We truly appreciate your feedback and support.</p>
+                </div>
+                
+                {% else %}
+                <p style="color: var(--text-muted); text-align: center; margin-bottom: 1.5rem; font-size: 0.88rem;">
+                    We'd love to hear how you liked your flowers!
+                </p>
+
+                <!-- Success Message -->
+                <div id="reviewSuccess" style="display: none; background: rgba(76,175,80,0.1); border: 1px solid rgba(76,175,80,0.3); border-radius: 16px; padding: 1.5rem; text-align: center; margin-bottom: 1rem;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎉</div>
+                    <p style="font-weight: 600; color: #2e7d32; margin-bottom: 0.3rem;">Thank you for your review!</p>
+                    <p style="font-size: 0.82rem; color: var(--text-muted);">Your feedback means the world to us.</p>
+                </div>
+
+                <form id="reviewForm" onsubmit="return submitReview(event)">
+                    <!-- Star Rating -->
+                    <div class="form-group" style="text-align: center;">
+                        <label class="form-label" style="text-align: center;">How would you rate us?</label>
+                        <div id="starRating" style="display: flex; gap: 8px; justify-content: center; font-size: 2.2rem; cursor: pointer; margin-top: 4px;">
+                            <span class="review-star" data-value="1" style="color: #ddd; transition: all 0.2s ease;">★</span>
+                            <span class="review-star" data-value="2" style="color: #ddd; transition: all 0.2s ease;">★</span>
+                            <span class="review-star" data-value="3" style="color: #ddd; transition: all 0.2s ease;">★</span>
+                            <span class="review-star" data-value="4" style="color: #ddd; transition: all 0.2s ease;">★</span>
+                            <span class="review-star" data-value="5" style="color: #f0a030; transition: all 0.2s ease;">★</span>
+                        </div>
+                        <input type="hidden" id="ratingValue" value="5">
+                    </div>
+
+                    <!-- Name -->
+                    <div class="form-group">
+                        <label class="form-label">Your Name</label>
+                        <input type="text" id="reviewName" class="input-field" placeholder="e.g. Sarah" required>
+                    </div>
+
+                    <!-- Occasion -->
+                    <div class="form-group">
+                        <label class="form-label">Occasion <span style="color: var(--text-muted); font-weight: 400;">(optional)</span></label>
+                        <select id="reviewOccasion" class="input-field" title="Select occasion">
+                            <option value="">— Select occasion —</option>
+                            <option value="Anniversary">Anniversary</option>
+                            <option value="Birthday">Birthday</option>
+                            <option value="Wedding">Wedding</option>
+                            <option value="Romance">Romance</option>
+                            <option value="Get Well">Get Well</option>
+                            <option value="Thank You">Thank You</option>
+                            <option value="Graduation">Graduation</option>
+                            <option value="New Baby">New Baby</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Review Text -->
+                    <div class="form-group">
+                        <label class="form-label">Your Review</label>
+                        <textarea id="reviewText" class="input-field" rows="4" placeholder="Tell us about your experience with Lvinas florist & gifts..." required style="resize: vertical; font-family: inherit;"></textarea>
+                    </div>
+
+                    <button type="submit" id="reviewSubmitBtn" class="btn btn-primary" style="width: 100%; padding: 14px;">
+                        Submit Review
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <script>
+        // Copy order ID
+        function copyOrderId(id) {
+            navigator.clipboard.writeText(id).then(() => {
+                const btn = document.getElementById('copyOrderBtn');
+                btn.classList.add('copied');
+                btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy';
+                }, 2000);
+            });
+        }
+
+        // Star rating interaction
+        (function() {
+            const stars = document.querySelectorAll('.review-star');
+            const ratingInput = document.getElementById('ratingValue');
+            let currentRating = 5;
+
+            function setRating(value) {
+                currentRating = value;
+                ratingInput.value = value;
+                stars.forEach((star, i) => {
+                    star.style.color = (i < value) ? '#f0a030' : '#ddd';
+                    star.style.transform = (i < value) ? 'scale(1.1)' : 'scale(1)';
+                });
+            }
+
+            stars.forEach(star => {
+                star.addEventListener('click', () => setRating(parseInt(star.dataset.value)));
+                star.addEventListener('mouseover', () => {
+                    const val = parseInt(star.dataset.value);
+                    stars.forEach((s, i) => {
+                        s.style.color = (i < val) ? '#f0a030' : '#ddd';
+                    });
+                });
+            });
+
+            document.getElementById('starRating').addEventListener('mouseleave', () => setRating(currentRating));
+            setRating(5);
+        })();
+
+        async function submitReview(e) {
+            e.preventDefault();
+            const btn = document.getElementById('reviewSubmitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+
+            try {
+                const resp = await fetch('/api/review', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customer_name: document.getElementById('reviewName').value,
+                        order_id: '{{ order.id }}',
+                        rating: document.getElementById('ratingValue').value,
+                        review_text: document.getElementById('reviewText').value,
+                        occasion: document.getElementById('reviewOccasion').value
+                    })
+                });
+                const data = await resp.json();
+                if (data.success) {
+                    document.getElementById('reviewForm').style.display = 'none';
+                    document.getElementById('reviewSuccess').style.display = 'block';
+                } else {
+                    alert(data.error || 'Failed to submit review');
+                    btn.disabled = false;
+                    btn.textContent = 'Submit Review';
+                }
+            } catch (err) {
+                alert('Network error. Please try again.');
+                btn.disabled = false;
+                btn.textContent = 'Submit Review';
+            }
+            return false;
+        }
+        </script>
+
+    <!-- ═══════════════════════════════════════════
+         ORDER NOT FOUND — PREMIUM ERROR STATE
+         ═══════════════════════════════════════════ -->
+    {% elif order_id %}
+        <div class="track-section glass-panel">
+            <div class="track-not-found">
+                <div class="track-not-found-icon">🥀</div>
+                <h3>Order Not Found</h3>
+                <p>We couldn't find an order with that tracking ID.</p>
+                <p>Please double-check and try again.</p>
+
+                <div class="track-not-found-tips">
+                    <h4>💡 Quick Tips</h4>
+                    <ul>
+                        <li>Your order ID looks like <strong>00001-XXXXXXXX</strong></li>
+                        <li>Check your WhatsApp or email for the confirmation message</li>
+                        <li>Make sure there are no extra spaces before or after the ID</li>
+                        <li>Contact us on WhatsApp if you need help</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Footer Actions -->
+    <div class="track-footer-actions">
+        <a href="{{ url_for('home') }}" class="track-btn-home" style="text-decoration: none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Back to Home
+        </a>
+        <a href="{{ url_for('all_products') }}" class="track-btn-browse" style="text-decoration: none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            Browse Collection
+        </a>
+    </div>
+</main>
+{% endblock %}

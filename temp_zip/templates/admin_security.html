@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+
+{% block title %}Security Subsystem | Lvina's Admin{% endblock %}
+
+{% block content %}
+<style>
+    /* ═══════════════════════════════════════════════
+       SECURITY DASHBOARD — PREMIUM STYLES
+       ═══════════════════════════════════════════════ */
+    .sec-dash-wrapper {
+        padding: 2rem;
+        max-width: 1000px;
+        margin: 0 auto;
+        animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Header ── */
+    .sec-header {
+        position: relative;
+        background: linear-gradient(135deg, #2a1622 0%, #4a1c30 100%);
+        border-radius: 24px;
+        padding: 3rem 2.5rem;
+        margin-bottom: 2.5rem;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    .sec-header::before {
+        content: ''; position: absolute; top: -50%; right: -10%; width: 400px; height: 400px;
+        background: radial-gradient(circle, rgba(248,200,216,0.15), transparent 70%); pointer-events: none;
+    }
+    .sec-header::after {
+        content: ''; position: absolute; bottom: -30%; left: 0%; width: 250px; height: 250px;
+        background: radial-gradient(circle, rgba(181,68,110,0.2), transparent 70%); pointer-events: none;
+    }
+    
+    .sec-header-icon {
+        width: 60px; height: 60px;
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px; border: 1px solid rgba(255,255,255,0.2);
+        display: flex; align-items: center; justify-content: center;
+        margin-bottom: 1.5rem; color: #fff;
+    }
+    .sec-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem; font-weight: 700; color: #fff;
+        margin-bottom: 0.5rem; letter-spacing: -0.02em;
+    }
+    .sec-subtitle {
+        font-family: 'Inter', sans-serif;
+        font-size: 1.05rem; color: rgba(255,255,255,0.7);
+        max-width: 600px; line-height: 1.6;
+    }
+
+    /* ── Form Cards ── */
+    .sec-card {
+        background: rgba(255,255,255,0.85);
+        backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(242,225,232,0.6);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 32px rgba(181,68,110,0.06);
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 2rem;
+    }
+    .sec-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(181,68,110,0.12);
+    }
+    
+    .sec-card-header {
+        display: flex; gap: 1rem; align-items: flex-start;
+        margin-bottom: 2rem;
+    }
+    .sec-card-icon {
+        width: 48px; height: 48px;
+        border-radius: 14px;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    .sec-icon-pink { background: rgba(181,68,110,0.1); color: #b5446e; }
+    .sec-icon-purple { background: rgba(108,75,160,0.1); color: #6c4ba0; }
+    .sec-icon-amber { background: rgba(201,123,46,0.1); color: #c97b2e; }
+
+    .sec-card-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.4rem; font-weight: 700; color: var(--text-main);
+        margin-bottom: 0.4rem;
+    }
+    .sec-card-desc {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem; color: var(--text-muted);
+        line-height: 1.5;
+    }
+
+    /* ── Custom Sleek Inputs ── */
+    .sec-row {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+    }
+    @media (max-width: 768px) { .sec-row { grid-template-columns: 1fr; } }
+
+    .sec-group { display: flex; flex-direction: column; gap: 0.6rem; }
+    .sec-label {
+        font-family: 'Inter', sans-serif; font-size: 0.85rem;
+        font-weight: 600; color: var(--text-dark);
+        text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .sec-input {
+        width: 100%; padding: 14px 18px;
+        border-radius: 12px;
+        border: 2px solid rgba(242,225,232,0.8);
+        background: #fff;
+        font-family: 'Inter', sans-serif; font-size: 1rem;
+        color: var(--text-main); font-weight: 500;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        outline: none;
+    }
+    .sec-input:focus {
+        border-color: #b5446e;
+        box-shadow: 0 0 0 4px rgba(181,68,110,0.15);
+    }
+
+    /* ── Apple-Style Toggle Switch ── */
+    .toggle-wrapper {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 1.5rem; background: #fff;
+        border-radius: 16px; border: 1px solid rgba(242,225,232,0.8);
+        transition: border-color 0.3s ease;
+    }
+    .toggle-wrapper:hover { border-color: rgba(181,68,110,0.4); }
+    
+    .toggle-text {
+        font-family: 'Inter', sans-serif; font-weight: 600;
+        font-size: 1rem; color: var(--text-main);
+    }
+    .switch { position: relative; display: inline-block; width: 56px; height: 32px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+        position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+        background-color: #ccc; transition: .4s; border-radius: 34px;
+    }
+    .slider:before {
+        position: absolute; content: "";
+        height: 24px; width: 24px; left: 4px; bottom: 4px;
+        background-color: white; transition: .4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    input:checked + .slider { background: linear-gradient(135deg, #b5446e, #d4728e); }
+    input:checked + .slider:before { transform: translateX(24px); }
+
+    /* ── Action Footer ── */
+    .sec-footer {
+        display: flex; justify-content: flex-end;
+        align-items: center; margin-top: 2rem;
+        padding-top: 2rem; border-top: 1px solid rgba(242,225,232,0.6);
+    }
+    .sec-save-btn {
+        display: inline-flex; align-items: center; gap: 10px;
+        padding: 16px 36px; border-radius: 50px;
+        background: linear-gradient(135deg, #b5446e, #d4728e);
+        color: #fff; font-family: 'Inter', sans-serif; font-size: 1rem;
+        font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+        border: none; cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 8px 24px rgba(181,68,110,0.3);
+    }
+    .sec-save-btn:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 12px 32px rgba(181,68,110,0.45);
+    }
+    .sec-save-btn svg { transition: transform 0.3s ease; }
+    .sec-save-btn:hover svg { transform: translateX(3px); }
+</style>
+
+<div class="sec-dash-wrapper">
+    
+    <!-- Header -->
+    <div class="sec-header">
+        <div class="sec-header-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h1 class="sec-title">Security & Spam Protection</h1>
+        <p class="sec-subtitle">Manage your store's security settings. Adjust these limits to keep bots and spam orders away.</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('admin_security') }}">
+        
+        <!-- Pillar 1: Honeypot -->
+        <div class="sec-card">
+            <div class="sec-card-header">
+                <div class="sec-card-icon sec-icon-purple">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                </div>
+                <div>
+                    <h3 class="sec-card-title">Hidden Bot Trap</h3>
+                    <p class="sec-card-desc">Adds an invisible trap to the checkout page. If a bot fills it out, the fake order is silently ignored and blocked.</p>
+                </div>
+            </div>
+            
+            <label class="toggle-wrapper">
+                <span class="toggle-text">Enable Bot Trap</span>
+                <div class="switch">
+                    <input type="checkbox" name="honeypot_enabled" {% if settings.honeypot_enabled %}checked{% endif %}>
+                    <span class="slider"></span>
+                </div>
+            </label>
+        </div>
+
+        <!-- Pillar 2 & 3: Constraints -->
+        <div class="sec-row">
+            
+            <div class="sec-card" style="margin-bottom: 0;">
+                <div class="sec-card-header" style="margin-bottom: 1.5rem;">
+                    <div class="sec-card-icon sec-icon-pink">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="sec-card-title">Fast-Click Blocker</h3>
+                        <p class="sec-card-desc">Normal customers take time to read and check out. Block instant clicks that are made by bots.</p>
+                    </div>
+                </div>
+                
+                <div class="sec-group">
+                    <label class="sec-label">Wait Time (Seconds)</label>
+                    <input type="number" name="fast_submit_limit_sec" class="sec-input" value="{{ settings.fast_submit_limit_sec }}" required min="0" max="60">
+                </div>
+            </div>
+
+            <div class="sec-card" style="margin-bottom: 0;">
+                <div class="sec-card-header" style="margin-bottom: 1.5rem;">
+                    <div class="sec-card-icon sec-icon-amber">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="sec-card-title">Order Limits</h3>
+                        <p class="sec-card-desc">Stop spam by limiting how many times a single customer can order within a short time.</p>
+                    </div>
+                </div>
+                
+                <div class="sec-row" style="gap: 1rem;">
+                    <div class="sec-group">
+                        <label class="sec-label">Max Orders Allowed</label>
+                        <input type="number" name="spam_order_limit" class="sec-input" value="{{ settings.spam_order_limit }}" required min="1" max="50">
+                    </div>
+                    <div class="sec-group">
+                        <label class="sec-label">Time Window (Mins)</label>
+                        <input type="number" name="spam_time_window_mins" class="sec-input" value="{{ settings.spam_time_window_mins }}" required min="1" max="120">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="sec-footer">
+            <button type="submit" class="sec-save-btn">
+                Save Settings
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

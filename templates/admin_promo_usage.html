@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="animate-fade-in" style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+        <div>
+            <h1 class="elegant-title" style="font-size: 2.2rem;">Promo Usage History</h1>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.3rem;">{{ promo.title }}</p>
+        </div>
+        <a href="{{ url_for('admin_promotions') }}" class="btn btn-outline" style="text-decoration: none;">← Back to Promotions</a>
+    </header>
+
+    <!-- Promo Info Card -->
+    <div class="pu-info-card">
+        <div class="pu-info-header">
+            <div class="pu-info-left">
+                <div class="pu-status-badge pu-status-{{ status }}">
+                    {% if status == 'active' %}🟢 Active{% elif status == 'scheduled' %}🟡 Scheduled{% elif status == 'expired' %}🔴 Expired{% elif status == 'exhausted' %}⚪ Exhausted{% else %}⚫ Inactive{% endif %}
+                </div>
+                <h2 class="pu-promo-title">{{ promo.title }}</h2>
+                {% if promo.promo_code %}
+                <div class="pu-code-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                    {{ promo.promo_code }}
+                </div>
+                {% endif %}
+            </div>
+            <div class="pu-discount-display">
+                <span class="pu-discount-val">
+                    {% if promo.discount_type == 'fixed' %}RM {{ "%.0f"|format(promo.discount_value or 0) }}{% else %}{{ "%.0f"|format(promo.discount_value or 0) }}%{% endif %}
+                </span>
+                <span class="pu-discount-type">{{ 'Fixed' if promo.discount_type == 'fixed' else 'Percentage' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="pu-stats-row">
+        <div class="pu-stat">
+            <div class="pu-stat-icon">📦</div>
+            <div class="pu-stat-info">
+                <span class="pu-stat-value">{{ orders|length }}</span>
+                <span class="pu-stat-label">Orders Used</span>
+            </div>
+        </div>
+        <div class="pu-stat">
+            <div class="pu-stat-icon">💰</div>
+            <div class="pu-stat-info">
+                <span class="pu-stat-value">RM {{ "%.2f"|format(total_discount) }}</span>
+                <span class="pu-stat-label">Total Discounts Given</span>
+            </div>
+        </div>
+        <div class="pu-stat">
+            <div class="pu-stat-icon">📊</div>
+            <div class="pu-stat-info">
+                <span class="pu-stat-value">RM {{ "%.2f"|format(total_revenue) }}</span>
+                <span class="pu-stat-label">Revenue After Discount</span>
+            </div>
+        </div>
+        <div class="pu-stat">
+            <div class="pu-stat-icon">🎯</div>
+            <div class="pu-stat-info">
+                <span class="pu-stat-value">{{ promo.times_used or 0 }}{% if promo.max_uses %}/{{ promo.max_uses }}{% endif %}</span>
+                <span class="pu-stat-label">Usage Count</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="pu-table-section">
+        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 1rem;">
+            📋 Orders Using This Code
+        </h3>
+        {% if orders %}
+        <div class="pu-table-wrap">
+            <table class="pu-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Original Amount</th>
+                        <th>Discount</th>
+                        <th>Final Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for o in orders %}
+                    <tr style="--row-i: {{ loop.index0 }};">
+                        <td>
+                            <span class="pu-order-id">{{ o.id }}</span>
+                        </td>
+                        <td>{{ o.created_at }}</td>
+                        <td>RM {{ "%.2f"|format(o.original_amount or o.total_amount) }}</td>
+                        <td>
+                            <span class="pu-discount-pill">-RM {{ "%.2f"|format(o.discount_amount or 0) }}</span>
+                        </td>
+                        <td><strong>RM {{ "%.2f"|format(o.total_amount) }}</strong></td>
+                        <td>
+                            <span class="pu-status-pill pu-order-{{ o.status|lower }}">{{ o.status }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="pu-empty">
+            <span style="font-size: 3rem;">📭</span>
+            <p>No orders have used this promo code yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</main>
+
+<style>
+/* Info Card */
+.pu-info-card {
+    background: rgba(255,255,255,0.9); backdrop-filter: blur(16px);
+    border: 1.5px solid var(--border); border-radius: 24px;
+    padding: 2rem; margin-bottom: 1.5rem;
+    animation: puFadeUp 0.5s ease-out;
+}
+.pu-info-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+.pu-info-left { display: flex; flex-direction: column; gap: 0.5rem; }
+.pu-status-badge {
+    display: inline-block; padding: 4px 14px; border-radius: 50px;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; width: fit-content;
+}
+.pu-status-active { background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: #065f46; }
+.pu-status-scheduled { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #78350f; }
+.pu-status-expired { background: linear-gradient(135deg, #fecdd3, #fca5a5); color: #7f1d1d; }
+.pu-status-exhausted { background: linear-gradient(135deg, #e5e7eb, #d1d5db); color: #4b5563; }
+.pu-status-inactive { background: linear-gradient(135deg, #e5e7eb, #d1d5db); color: #6b7280; }
+
+.pu-promo-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 600; }
+.pu-code-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 16px; border-radius: 8px;
+    background: linear-gradient(135deg, #2a1622, #3d2233);
+    color: #f8c8d8; font-size: 0.85rem; font-weight: 700;
+    letter-spacing: 0.12em; font-family: 'Courier New', monospace; width: fit-content;
+}
+.pu-discount-display { text-align: center; }
+.pu-discount-val {
+    display: block; font-size: 2.5rem; font-weight: 800; font-family: 'Playfair Display', serif;
+    background: linear-gradient(135deg, var(--text-main), #b5446e);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.pu-discount-type { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* Stats Row */
+.pu-stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.pu-stat {
+    display: flex; align-items: center; gap: 1rem; padding: 1.3rem 1.5rem;
+    border-radius: 20px; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px);
+    border: 1px solid var(--border); transition: all 0.3s ease;
+    animation: puFadeUp 0.5s ease-out; animation-delay: calc(var(--i, 0) * 0.08s);
+}
+.pu-stat:nth-child(1){--i:1;} .pu-stat:nth-child(2){--i:2;} .pu-stat:nth-child(3){--i:3;} .pu-stat:nth-child(4){--i:4;}
+.pu-stat:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(200,146,159,0.12); }
+.pu-stat-icon { font-size: 1.6rem; }
+.pu-stat-info { display: flex; flex-direction: column; }
+.pu-stat-value { font-size: 1.4rem; font-weight: 700; font-family: 'Playfair Display', serif; }
+.pu-stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+
+/* Table */
+.pu-table-section {
+    background: rgba(255,255,255,0.9); backdrop-filter: blur(16px);
+    border: 1.5px solid var(--border); border-radius: 24px; padding: 2rem;
+    animation: puFadeUp 0.6s ease-out 0.2s both;
+}
+.pu-table-wrap { overflow-x: auto; }
+.pu-table { width: 100%; border-collapse: collapse; }
+.pu-table th {
+    text-align: left; padding: 0.8rem 1rem; font-size: 0.72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+}
+.pu-table td {
+    padding: 1rem; font-size: 0.88rem; border-bottom: 1px solid rgba(248,200,216,0.15);
+    color: var(--text-main);
+}
+.pu-table tbody tr {
+    transition: all 0.3s ease;
+    animation: puRowIn 0.4s ease-out both;
+    animation-delay: calc(var(--row-i) * 0.05s);
+}
+.pu-table tbody tr:hover { background: rgba(248,200,216,0.06); }
+.pu-order-id { font-family: 'Courier New', monospace; font-weight: 600; font-size: 0.82rem; color: var(--accent); }
+.pu-discount-pill {
+    display: inline-block; padding: 3px 10px; border-radius: 50px;
+    background: rgba(239,68,68,0.08); color: #dc2626; font-size: 0.78rem; font-weight: 600;
+}
+.pu-status-pill {
+    display: inline-block; padding: 4px 12px; border-radius: 50px;
+    font-size: 0.7rem; font-weight: 600;
+}
+.pu-order-processing { background: rgba(59,130,246,0.1); color: #2563eb; }
+.pu-order-shipped { background: rgba(168,85,247,0.1); color: #7c3aed; }
+.pu-order-delivered { background: rgba(34,197,94,0.1); color: #16a34a; }
+.pu-order-cancelled { background: rgba(239,68,68,0.1); color: #dc2626; }
+
+.pu-empty { text-align: center; padding: 3rem 2rem; color: var(--text-muted); }
+
+@keyframes puFadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+@keyframes puRowIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 768px) {
+    .pu-stats-row { grid-template-columns: 1fr 1fr; }
+    .pu-info-header { flex-direction: column; align-items: flex-start; }
+}
+</style>
+{% endblock %}

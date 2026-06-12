@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  image       String
+  category    String   // e.g., 'Bouquets', 'Boxed Flowers', 'Stands'
+  budget      String   // e.g., 'Low', 'Medium', 'High'
+  use         String   // e.g., 'Birthday', 'Anniversary', 'Condolence'
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Order {
+  id          String   @id // Generates like 00001-XXXXXX
+  customerName String?
+  customerPhone String?
+  totalAmount Float
+  status      String   @default("Processing") // "Processing", "Shipped", "Delivered"
+  products    String   // Storing JSON string of products ordered for simplicity
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Promotion {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  discount    String?
+  bannerImage String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

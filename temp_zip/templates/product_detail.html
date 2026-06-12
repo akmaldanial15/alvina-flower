@@ -1,0 +1,1668 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Floating Decorative Particles -->
+<div class="pd-particles" aria-hidden="true">
+    <div class="pd-particle pd-particle-1"></div>
+    <div class="pd-particle pd-particle-2"></div>
+    <div class="pd-particle pd-particle-3"></div>
+    <div class="pd-particle pd-particle-4"></div>
+    <div class="pd-particle pd-particle-5"></div>
+    <div class="pd-particle pd-particle-6"></div>
+    <div class="pd-particle pd-particle-7"></div>
+    <div class="pd-particle pd-particle-8"></div>
+</div>
+
+<main class="pd-main animate-fade-in">
+
+    <!-- Breadcrumb Navigation -->
+    <nav class="pd-breadcrumb">
+        <a href="{{ url_for('home') }}" class="pd-breadcrumb-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Home
+        </a>
+        <span class="pd-breadcrumb-sep">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+        <a href="{{ url_for('all_products') }}" class="pd-breadcrumb-link">Collection</a>
+        <span class="pd-breadcrumb-sep">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+        <span class="pd-breadcrumb-current">{{ product.name }}</span>
+    </nav>
+
+    <!-- Product Layout -->
+    <div class="pd-grid">
+
+        <!-- LEFT: Image Showcase -->
+        <div class="pd-image-section">
+            <!-- Decorative Corner Ornaments -->
+            <div class="pd-corner-ornament pd-corner-tl" aria-hidden="true">
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                    <path d="M8 72C8 36 36 8 72 8" stroke="url(#cornGrad1)" stroke-width="1" stroke-linecap="round"/>
+                    <path d="M16 72C16 42 42 16 72 16" stroke="url(#cornGrad1)" stroke-width="0.5" stroke-linecap="round" opacity="0.5"/>
+                    <circle cx="72" cy="8" r="3" fill="#f1a9c3" opacity="0.7"/>
+                    <circle cx="8" cy="72" r="3" fill="#d8a7b1" opacity="0.7"/>
+                    <circle cx="72" cy="16" r="1.5" fill="#f8c8d8" opacity="0.4"/>
+                    <defs><linearGradient id="cornGrad1"><stop stop-color="#f8c8d8"/><stop offset="1" stop-color="#d8a7b1"/></linearGradient></defs>
+                </svg>
+            </div>
+            <div class="pd-corner-ornament pd-corner-br" aria-hidden="true">
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                    <path d="M72 8C72 44 44 72 8 72" stroke="url(#cornGrad2)" stroke-width="1" stroke-linecap="round"/>
+                    <path d="M64 8C64 38 38 64 8 64" stroke="url(#cornGrad2)" stroke-width="0.5" stroke-linecap="round" opacity="0.5"/>
+                    <circle cx="8" cy="72" r="3" fill="#f1a9c3" opacity="0.7"/>
+                    <circle cx="72" cy="8" r="3" fill="#d8a7b1" opacity="0.7"/>
+                    <defs><linearGradient id="cornGrad2"><stop stop-color="#d8a7b1"/><stop offset="1" stop-color="#f8c8d8"/></linearGradient></defs>
+                </svg>
+            </div>
+
+            <!-- Premium Quality Ribbon Badge - TOP RIGHT of image -->
+            <div class="pd-premium-ribbon">
+                <div class="pd-premium-ribbon-inner">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" opacity="0.9"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <span>Premium Quality</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" opacity="0.9"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </div>
+            </div>
+
+            <div class="pd-image-frame">
+                <div class="pd-image-glow" aria-hidden="true"></div>
+                <div class="pd-image-wrapper" id="imageWrapper">
+                    <img src="{{ product.image }}" alt="{{ product.name }}" class="pd-image" id="productImage" />
+                    <div class="pd-image-overlay">
+                        <div class="pd-zoom-icon-circle">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
+                        </div>
+                        <span>Click to zoom</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Small decorative dots below image -->
+            <div class="pd-image-dots" aria-hidden="true">
+                <span class="pd-dot pd-dot-active"></span>
+                <span class="pd-dot"></span>
+                <span class="pd-dot"></span>
+            </div>
+        </div>
+
+        <!-- RIGHT: Product Information -->
+        <div class="pd-info-section">
+
+            <!-- Category Tags -->
+            <div class="pd-tags">
+                <span class="pd-tag">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                    {{ product.category }}
+                </span>
+                <span class="pd-tag">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    {{ product.use }}
+                </span>
+            </div>
+
+            <!-- Product Title -->
+            <h1 class="pd-title elegant-title">{{ product.name }}</h1>
+
+            <!-- Elegant Divider with flower -->
+            <div class="pd-divider" aria-hidden="true">
+                <span class="pd-divider-line"></span>
+                <div class="pd-divider-flower">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="3" fill="#f8c8d8" opacity="0.8"/>
+                        <ellipse cx="12" cy="6" rx="2.5" ry="4" fill="#f8c8d8" opacity="0.4" transform="rotate(0 12 12)"/>
+                        <ellipse cx="12" cy="6" rx="2.5" ry="4" fill="#f8c8d8" opacity="0.4" transform="rotate(72 12 12)"/>
+                        <ellipse cx="12" cy="6" rx="2.5" ry="4" fill="#f8c8d8" opacity="0.4" transform="rotate(144 12 12)"/>
+                        <ellipse cx="12" cy="6" rx="2.5" ry="4" fill="#f8c8d8" opacity="0.4" transform="rotate(216 12 12)"/>
+                        <ellipse cx="12" cy="6" rx="2.5" ry="4" fill="#f8c8d8" opacity="0.4" transform="rotate(288 12 12)"/>
+                    </svg>
+                </div>
+                <span class="pd-divider-line"></span>
+            </div>
+
+            <!-- Description -->
+            <p class="pd-description">{{ product.description }}</p>
+
+            <!-- Feature Icons Row (No Free Delivery - only relevant features) -->
+            <div class="pd-features">
+                <div class="pd-feature">
+                    <div class="pd-feature-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <div class="pd-feature-text">
+                        <span class="pd-feature-label">Fresh Guaranteed</span>
+                        <span class="pd-feature-sub">Always vibrant & alive</span>
+                    </div>
+                </div>
+                <div class="pd-feature">
+                    <div class="pd-feature-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </div>
+                    <div class="pd-feature-text">
+                        <span class="pd-feature-label">Handcrafted</span>
+                        <span class="pd-feature-sub">Made with love & care</span>
+                    </div>
+                </div>
+                <div class="pd-feature">
+                    <div class="pd-feature-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <div class="pd-feature-text">
+                        <span class="pd-feature-label">Top Rated</span>
+                        <span class="pd-feature-sub">Loved by customers</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Promo Banner (if applicable) -->
+            {% if applicable_promos %}
+            <div class="pd-promo-banner" id="promoBanner">
+                <div class="pd-promo-banner-glow"></div>
+                <div class="pd-promo-banner-content">
+                    <span class="pd-promo-banner-icon">🎉</span>
+                    <div class="pd-promo-banner-text">
+                        <strong>{{ applicable_promos[0].title }}</strong>
+                        {% if applicable_promos[0].promo_code %}
+                         — Use code <span class="pd-promo-banner-code">{{ applicable_promos[0].promo_code }}</span>
+                        {% endif %}
+                        <span class="pd-promo-banner-desc">{{ applicable_promos[0].discount }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Price Section -->
+            <div class="pd-price-section">
+                <div class="pd-price-shimmer-bg"></div>
+                <div class="pd-price-content">
+                    <div class="pd-price-label">Total Price</div>
+                    {% if best_promo and best_discount > 0 %}
+                    <div class="pd-price-original" id="originalPrice">
+                        <span style="text-decoration: line-through; opacity: 0.5;">RM {{ "%.2f"|format(product.price) }}</span>
+                        <span class="pd-promo-save-badge">Save RM {{ "%.2f"|format(best_discount) }}</span>
+                    </div>
+                    <div class="pd-price" id="priceDisplay">
+                        <span class="pd-price-currency">RM</span>
+                        <span class="pd-price-amount" id="priceAmount">{{ "%.2f"|format(product.price - best_discount) }}</span>
+                    </div>
+                    {% else %}
+                    <div class="pd-price-original" id="originalPrice" style="display:none;">
+                        <span style="text-decoration: line-through; opacity: 0.5;">RM {{ "%.2f"|format(product.price) }}</span>
+                        <span class="pd-promo-save-badge" id="saveBadge"></span>
+                    </div>
+                    <div class="pd-price" id="priceDisplay">
+                        <span class="pd-price-currency">RM</span>
+                        <span class="pd-price-amount" id="priceAmount">{{ "%.2f"|format(product.price) }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="pd-price-note">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        Inclusive of all taxes & arrangement
+                    </div>
+                </div>
+            </div>
+
+            <!-- Promo Code Input -->
+            <div class="pd-promo-input-section" id="promoSection">
+                <div class="pd-promo-input-wrap">
+                    <div class="pd-promo-input-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                    </div>
+                    <input type="text" id="promoCodeInput" placeholder="Enter promo code" autocomplete="off" style="text-transform: uppercase;">
+                    <button type="button" id="applyPromoBtn" class="pd-promo-apply-btn" onclick="applyPromo()">Apply</button>
+                </div>
+                <div id="promoMessage" class="pd-promo-message"></div>
+                {% set public_promos = applicable_promos | selectattr('is_public') | list if applicable_promos else [] %}
+                {% if public_promos %}
+                <div class="pd-promo-chips">
+                    <span class="pd-promo-chips-label">Available codes:</span>
+                    {% for ap in public_promos %}
+                    <button type="button" class="pd-promo-chip" onclick="fillPromoCode('{{ ap.promo_code }}')" title="{{ ap.title }} — {{ ap.discount }}">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                        {{ ap.promo_code }}
+                    </button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            <!-- Honeypot Bot Trap -->
+            <input type="text" id="alt_shipping_zipcode" name="alt_shipping_zipcode" style="opacity:0; position:absolute; left:-9999px;" tabindex="-1" autocomplete="new-password" aria-hidden="true" value="">
+
+            <!-- Order Button -->
+            <button id="orderBtn" class="pd-order-btn" {% if store_settings.store_status_mode == 'closed' %}disabled{% endif %}>
+                <span class="pd-order-btn-bg" {% if store_settings.store_status_mode == 'closed' %}style="background: #999;"{% endif %}></span>
+                <span class="pd-order-btn-content">
+                    {% if store_settings.store_status_mode == 'closed' %}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    🚫 Store Temporarily Closed
+                    {% else %}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    Order Now
+                    {% endif %}
+                </span>
+                {% if store_settings.store_status_mode != 'closed' %}
+                <span class="pd-order-shimmer"></span>
+                {% endif %}
+            </button>
+
+            <!-- Trust Badges -->
+            <div class="pd-trust">
+                <div class="pd-trust-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <span>100% Satisfaction</span>
+                </div>
+                <div class="pd-trust-divider"></div>
+                <div class="pd-trust-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <span>Secure Ordering</span>
+                </div>
+                <div class="pd-trust-divider"></div>
+                <div class="pd-trust-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    <span>WhatsApp Support</span>
+                </div>
+            </div>
+
+            <!-- Back Link -->
+            <div class="pd-back">
+                <a href="{{ url_for('all_products') }}" class="pd-back-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                    Back to Collection
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Checkout Details Modal -->
+<div class="pd-modal" id="checkoutModal">
+    <div class="pd-modal-backdrop" id="checkoutModalBackdrop"></div>
+    <div class="pd-modal-content chk-modal-box">
+        
+        <!-- Elegant floral corner decoration -->
+        <svg class="chk-corner-deco chk-corner-tl" viewBox="0 0 100 100" fill="none" opacity="0.15">
+            <path d="M0,0 Q50,0 50,50 Q0,50 0,0" fill="var(--primary)"/>
+            <path d="M50,0 Q100,0 100,50 Q50,50 50,0" fill="var(--secondary)"/>
+            <circle cx="50" cy="50" r="10" fill="var(--primary)"/>
+        </svg>
+        <svg class="chk-corner-deco chk-corner-br" viewBox="0 0 100 100" fill="none" opacity="0.1">
+            <path d="M50,100 Q100,100 100,50 Q100,0 50,50" fill="var(--primary)"/>
+            <path d="M0,50 Q50,50 50,100 Q0,100 0,50" fill="var(--secondary)"/>
+            <circle cx="50" cy="50" r="10" fill="var(--primary)"/>
+        </svg>
+
+        <button class="chk-modal-close" id="checkoutModalClose" aria-label="Close checkout">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        
+        <div class="chk-header">
+            <h2 class="chk-title">Order Details</h2>
+            <p class="chk-subtitle">Please provide the following details to complete your order beautifully.</p>
+            <div class="chk-divider"></div>
+        </div>
+        
+        <form id="checkoutForm" class="chk-form">
+            {% for field in store_settings.checkout_form_schema_parsed %}
+                {% if field.enabled %}
+                    <div class="chk-form-group" style="animation-delay: {{ loop.index0 * 0.05 }}s;">
+                        <label class="chk-label">
+                            {{ field.label }} {% if field.required %}<span class="chk-required">*</span>{% endif %}
+                        </label>
+                        {% if field.type == 'textarea' %}
+                            <textarea class="chk-input" name="{{ field.id }}" rows="3" {% if field.required %}required{% endif %}></textarea>
+                        {% elif field.type == 'select' %}
+                            <select class="chk-input" name="{{ field.id }}" {% if field.required %}required{% endif %}>
+                                <option value="">-- Please Select --</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        {% elif field.type == 'date' %}
+                            <input type="date" class="chk-input" name="{{ field.id }}" id="date_input_{{ field.id }}" onchange="handleDateSelect(this, '{{ field.id }}')" min="" {% if field.required %}required{% endif %}>
+                            <div id="time_wrapper_{{ field.id }}" style="display: none; margin-top: 1rem; animation: chkFadeUp 0.4s ease forwards;">
+                                <label class="chk-label">Available Time <span class="chk-required">*</span></label>
+                                <select class="chk-input" name="time_{{ field.id }}" id="time_select_{{ field.id }}" {% if field.required %}required{% endif %} disabled>
+                                    <option value="">-- Select Date First --</option>
+                                </select>
+                            </div>
+                        {% else %}
+                            <input type="{{ field.type }}" class="chk-input" name="{{ field.id }}" {% if field.required %}required{% endif %}>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <div class="chk-form-group" style="margin-top: 1.5rem; animation-delay: 0.5s;">
+                <button type="submit" class="chk-btn" id="confirmOrderBtn">
+                    <span class="chk-btn-text">Confirm & Place Order</span>
+                    <svg class="chk-btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Image Zoom Modal -->
+<div class="pd-modal" id="zoomModal">
+    <div class="pd-modal-backdrop" id="modalBackdrop"></div>
+    <div class="pd-modal-content">
+        <button class="pd-modal-close" id="modalClose" aria-label="Close zoom">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <img src="{{ product.image }}" alt="{{ product.name }}" class="pd-modal-image" />
+    </div>
+</div>
+
+<style>
+/* ===== PRODUCT DETAIL PAGE STYLES ===== */
+
+/* Particles */
+.pd-particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+.pd-particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0;
+    animation: pdFloat 14s infinite ease-in-out;
+}
+.pd-particle-1 { width: 8px; height: 8px; background: rgba(248,200,216,0.5); top: 12%; left: 8%; animation-delay: 0s; }
+.pd-particle-2 { width: 5px; height: 5px; background: rgba(216,167,177,0.4); top: 25%; right: 12%; animation-delay: 1.5s; }
+.pd-particle-3 { width: 10px; height: 10px; background: rgba(248,200,216,0.3); top: 55%; left: 18%; animation-delay: 3s; }
+.pd-particle-4 { width: 4px; height: 4px; background: rgba(241,169,195,0.4); top: 65%; right: 22%; animation-delay: 5s; }
+.pd-particle-5 { width: 7px; height: 7px; background: rgba(248,200,216,0.45); top: 80%; left: 45%; animation-delay: 7s; }
+.pd-particle-6 { width: 6px; height: 6px; background: rgba(216,167,177,0.3); top: 38%; left: 65%; animation-delay: 9s; }
+.pd-particle-7 { width: 5px; height: 5px; background: rgba(248,200,216,0.35); top: 18%; left: 48%; animation-delay: 11s; }
+.pd-particle-8 { width: 8px; height: 8px; background: rgba(241,169,195,0.25); top: 75%; right: 10%; animation-delay: 13s; }
+
+@keyframes pdFloat {
+    0%, 100% { opacity: 0; transform: translateY(0) scale(0.5); }
+    15% { opacity: 1; }
+    50% { opacity: 0.6; transform: translateY(-50px) scale(1); }
+    85% { opacity: 0.2; }
+}
+
+/* Main Container */
+.pd-main {
+    position: relative;
+    z-index: 1;
+    padding: 1.5rem 2rem 4rem;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+/* Breadcrumb */
+.pd-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.8rem 0 1.8rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+.pd-breadcrumb-link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-muted);
+    transition: color 0.3s;
+    text-decoration: none;
+}
+.pd-breadcrumb-link:hover { color: var(--primary-hover); }
+.pd-breadcrumb-sep { opacity: 0.3; display: flex; }
+.pd-breadcrumb-current { color: var(--text-main); font-weight: 600; }
+
+/* Grid Layout */
+.pd-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+}
+
+/* ===== IMAGE SECTION ===== */
+.pd-image-section {
+    position: relative;
+    padding: 2.5rem;
+}
+
+/* Corner Ornaments */
+.pd-corner-ornament {
+    position: absolute;
+    z-index: 2;
+    opacity: 0.8;
+    animation: pdOrnamentPulse 5s ease-in-out infinite;
+}
+.pd-corner-tl { top: -5px; left: -5px; }
+.pd-corner-br { bottom: -5px; right: -5px; }
+
+@keyframes pdOrnamentPulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+}
+
+/* Premium Quality Ribbon */
+.pd-premium-ribbon {
+    position: absolute;
+    top: 2rem;
+    right: 0.5rem;
+    z-index: 10;
+    animation: pdRibbonFloat 3s ease-in-out infinite;
+}
+
+.pd-premium-ribbon-inner {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 22px;
+    background: linear-gradient(135deg, #c8929f, #a87180, #c8929f);
+    background-size: 200% 200%;
+    animation: pdRibbonGradient 4s ease infinite;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border-radius: 50px;
+    box-shadow: 
+        0 4px 20px rgba(168, 113, 128, 0.4),
+        0 2px 8px rgba(168, 113, 128, 0.3),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.pd-premium-ribbon-inner::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    animation: pdRibbonShine 2.5s ease-in-out infinite;
+}
+
+@keyframes pdRibbonFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
+@keyframes pdRibbonGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes pdRibbonShine {
+    0% { left: -100%; }
+    100% { left: 200%; }
+}
+
+/* Image Frame */
+.pd-image-frame {
+    position: relative;
+    border-radius: 28px;
+    overflow: hidden;
+    background: linear-gradient(145deg, #fff, #fdf5f7, #fef8fa);
+    box-shadow:
+        0 30px 70px rgba(200, 146, 159, 0.18),
+        0 12px 25px rgba(200, 146, 159, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    border: 1.5px solid rgba(248, 200, 216, 0.35);
+}
+
+.pd-image-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    background: radial-gradient(circle, rgba(248, 200, 216, 0.25) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+    animation: pdGlow 6s ease-in-out infinite;
+}
+@keyframes pdGlow {
+    0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.15); }
+}
+
+.pd-image-wrapper {
+    position: relative;
+    cursor: zoom-in;
+    overflow: hidden;
+}
+
+.pd-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    z-index: 1;
+}
+
+.pd-image-wrapper:hover .pd-image {
+    transform: scale(1.06);
+}
+
+.pd-image-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: rgba(42, 22, 34, 0.0);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    opacity: 0;
+    transition: all 0.5s ease;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.pd-zoom-icon-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.pd-image-wrapper:hover .pd-image-overlay {
+    opacity: 1;
+    background: rgba(42, 22, 34, 0.18);
+}
+
+/* Image Dots */
+.pd-image-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 1.2rem;
+}
+
+.pd-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(248, 200, 216, 0.3);
+    border: 1px solid rgba(248, 200, 216, 0.4);
+    transition: all 0.3s ease;
+}
+
+.pd-dot-active {
+    background: var(--primary);
+    width: 24px;
+    border-radius: 10px;
+    border-color: var(--primary-hover);
+}
+
+
+/* ===== INFO SECTION ===== */
+.pd-info-section {
+    padding: 0.5rem 0;
+}
+
+/* Tags */
+.pd-tags {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.pd-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 18px;
+    border-radius: 50px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    background: linear-gradient(135deg, rgba(248, 200, 216, 0.12), rgba(216, 167, 177, 0.08));
+    border: 1px solid rgba(248, 200, 216, 0.35);
+    color: var(--accent);
+    letter-spacing: 0.03em;
+    transition: all 0.3s ease;
+}
+
+.pd-tag:hover {
+    background: linear-gradient(135deg, rgba(248, 200, 216, 0.25), rgba(216, 167, 177, 0.15));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(248, 200, 216, 0.2);
+}
+
+/* Title */
+.pd-title {
+    font-size: 2.8rem;
+    line-height: 1.12;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--text-main) 0%, #5a3d4d 50%, var(--text-main) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Divider */
+.pd-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 1.2rem 0 1.5rem;
+}
+
+.pd-divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(248, 200, 216, 0.6), transparent);
+}
+
+.pd-divider-flower {
+    animation: pdFlowerSpin 12s linear infinite;
+    display: flex;
+}
+
+@keyframes pdFlowerSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Description */
+.pd-description {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    line-height: 1.85;
+    margin-bottom: 1.8rem;
+    font-weight: 400;
+}
+
+/* Features */
+.pd-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+}
+
+.pd-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px;
+    border-radius: 16px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.7), rgba(253,245,247,0.5));
+    border: 1px solid rgba(248,200,216,0.2);
+    transition: all 0.3s ease;
+}
+
+.pd-feature:hover {
+    background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(253,245,247,0.7));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(248, 200, 216, 0.15);
+}
+
+.pd-feature-icon {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(248, 200, 216, 0.25), rgba(216, 167, 177, 0.15));
+    border-radius: 12px;
+    color: var(--accent);
+    transition: all 0.3s ease;
+}
+
+.pd-feature:hover .pd-feature-icon {
+    background: linear-gradient(135deg, rgba(248, 200, 216, 0.45), rgba(216, 167, 177, 0.3));
+    transform: scale(1.1);
+}
+
+.pd-feature-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.pd-feature-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-main);
+    letter-spacing: 0.01em;
+}
+
+.pd-feature-sub {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+/* Price Section */
+.pd-price-section {
+    position: relative;
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    border: 1.5px solid rgba(248, 200, 216, 0.3);
+    background: linear-gradient(145deg, rgba(255,255,255,0.92), rgba(253,245,247,0.85));
+}
+
+.pd-price-shimmer-bg {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(248,200,216,0.08), transparent);
+    animation: pdPriceShimmer 5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes pdPriceShimmer {
+    0% { transform: translateX(-25%); }
+    100% { transform: translateX(25%); }
+}
+
+.pd-price-content {
+    position: relative;
+    z-index: 1;
+}
+
+.pd-price-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+}
+
+.pd-price {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.pd-price-currency {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent);
+    font-family: 'Playfair Display', serif;
+}
+
+.pd-price-amount {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--text-main);
+    font-family: 'Playfair Display', serif;
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+
+.pd-price-note {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+/* Order Button */
+.pd-order-btn {
+    position: relative;
+    width: 100%;
+    padding: 18px 32px;
+    border: none;
+    border-radius: 60px;
+    cursor: pointer;
+    overflow: hidden;
+    font-size: 1.15rem;
+    font-weight: 600;
+    font-family: inherit;
+    letter-spacing: 0.04em;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    margin-bottom: 1.5rem;
+    background: transparent;
+}
+
+.pd-order-btn-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #f8c8d8, #f1a9c3, #d8a7b1, #f1a9c3);
+    background-size: 300% 300%;
+    animation: pdGradientMove 5s ease infinite;
+    border-radius: 60px;
+    z-index: 0;
+    transition: all 0.4s ease;
+}
+
+@keyframes pdGradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.pd-order-btn-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.pd-order-shimmer {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    z-index: 1;
+    animation: pdBtnShimmer 3.5s ease-in-out infinite;
+}
+
+@keyframes pdBtnShimmer {
+    0% { left: -100%; }
+    100% { left: 250%; }
+}
+
+.pd-order-btn:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 12px 35px rgba(248, 200, 216, 0.45),
+        0 6px 18px rgba(241, 169, 195, 0.3);
+}
+
+.pd-order-btn:hover .pd-order-btn-bg {
+    filter: brightness(1.08) saturate(1.1);
+}
+
+.pd-order-btn:active {
+    transform: translateY(-1px);
+}
+
+.pd-order-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Trust Badges */
+.pd-trust {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.pd-trust-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.pd-trust-divider {
+    width: 1px;
+    height: 14px;
+    background: rgba(248, 200, 216, 0.4);
+}
+
+/* Back Link */
+.pd-back {
+    text-align: center;
+}
+
+.pd-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 10px 28px;
+    border-radius: 50px;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.pd-back-link:hover {
+    color: var(--primary-hover);
+    border-color: var(--primary);
+    background: rgba(248, 200, 216, 0.08);
+    transform: translateX(-5px);
+}
+
+/* ===== ZOOM MODAL ===== */
+.pd-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.pd-modal.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.pd-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(42, 22, 34, 0.85);
+    backdrop-filter: blur(25px);
+}
+
+.pd-modal-content {
+    position: relative;
+    max-width: 80vw;
+    max-height: 85vh;
+    transform: scale(0.9);
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.pd-modal.active .pd-modal-content {
+    transform: scale(1);
+}
+
+.pd-modal-image {
+    max-width: 100%;
+    max-height: 85vh;
+    border-radius: 24px;
+    box-shadow: 0 35px 90px rgba(0, 0, 0, 0.45);
+}
+
+.pd-modal-close {
+    position: absolute;
+    top: -18px;
+    right: -18px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.95);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-main);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.pd-modal-close:hover {
+    background: white;
+    transform: scale(1.1) rotate(90deg);
+}
+
+/* ===== ELEGANT CHECKOUT MODAL STYLES ===== */
+.chk-modal-box {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 28px;
+    padding: 3rem;
+    max-width: 540px;
+    width: 92vw;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 
+        0 40px 100px -20px rgba(181, 68, 110, 0.25),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+}
+
+/* Custom WebKit Scrollbar for Modal */
+.chk-modal-box::-webkit-scrollbar {
+    width: 8px;
+}
+.chk-modal-box::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 10px;
+    margin: 10px 0;
+}
+.chk-modal-box::-webkit-scrollbar-thumb {
+    background: rgba(200, 146, 159, 0.4);
+    border-radius: 10px;
+    border: 2px solid rgba(255,255,255,0.8);
+}
+.chk-modal-box::-webkit-scrollbar-thumb:hover {
+    background: rgba(181, 68, 110, 0.6);
+}
+
+/* Corner Decorations */
+.chk-corner-deco {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    pointer-events: none;
+    z-index: 0;
+}
+.chk-corner-tl { top: -20px; left: -20px; transform: rotate(0deg); }
+.chk-corner-br { bottom: -20px; right: -20px; transform: rotate(0deg); }
+
+.chk-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(200, 146, 159, 0.3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    z-index: 10;
+}
+
+.chk-modal-close:hover {
+    background: rgba(181, 68, 110, 0.1);
+    color: var(--primary);
+    transform: rotate(90deg);
+}
+
+.chk-header {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 2.5rem;
+}
+
+.chk-title {
+    color: var(--text-main);
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--text-main), var(--primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+}
+
+.chk-subtitle {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    max-width: 80%;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+.chk-divider {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    margin: 1.5rem auto 0;
+    border-radius: 3px;
+    opacity: 0.5;
+}
+
+.chk-form {
+    position: relative;
+    z-index: 1;
+}
+
+.chk-form-group {
+    margin-bottom: 1.4rem;
+    opacity: 0;
+    animation: chkFadeUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes chkFadeUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.chk-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.85;
+}
+
+.chk-required {
+    color: #e63946;
+    margin-left: 2px;
+}
+
+.chk-input {
+    width: 100%;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(200, 146, 159, 0.3);
+    border-radius: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: var(--text-main);
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.chk-input:focus {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: var(--primary);
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.02),
+        0 0 0 4px rgba(181, 68, 110, 0.1);
+    transform: translateY(-1px);
+}
+
+textarea.chk-input {
+    resize: vertical;
+    min-height: 100px;
+}
+
+select.chk-input {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a87180' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.chk-btn {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, var(--primary), #a33b61);
+    color: white;
+    border: none;
+    border-radius: 60px;
+    font-weight: 600;
+    font-size: 1.15rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 
+        0 10px 25px -5px rgba(181, 68, 110, 0.4),
+        0 0 0 0 rgba(181, 68, 110, 0);
+    position: relative;
+    overflow: hidden;
+}
+
+.chk-btn::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: skewX(-20deg);
+    transition: 0s;
+}
+
+.chk-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 15px 30px -5px rgba(181, 68, 110, 0.5),
+        0 0 0 3px rgba(181, 68, 110, 0.2);
+}
+
+.chk-btn:hover::after {
+    animation: chkBtnShine 1s forwards;
+}
+
+@keyframes chkBtnShine {
+    to { left: 200%; }
+}
+
+/* Adjust modal animations */
+.pd-modal-content {
+    position: relative;
+    transform: scale(0.95) translateY(20px);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.pd-modal.active .pd-modal-content {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+@media (max-width: 960px) {
+    .pd-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    .pd-title { font-size: 2.2rem; }
+    .pd-image-section { padding: 1.5rem; }
+    .pd-features { grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; }
+    .pd-premium-ribbon { top: 1rem; right: 0; }
+    .pd-modal-content { max-width: 95vw; }
+    .pd-modal-close { top: -12px; right: -5px; }
+}
+
+@media (max-width: 640px) {
+    .pd-main { padding: 1rem 1rem 3rem; }
+    .pd-title { font-size: 1.9rem; }
+    .pd-price-amount { font-size: 2.2rem; }
+    .pd-features { grid-template-columns: 1fr; }
+    .pd-feature { flex-direction: row; align-items: center; }
+    .pd-trust { flex-direction: column; gap: 0.5rem; }
+    .pd-trust-divider { display: none; }
+    .pd-premium-ribbon-inner { font-size: 0.65rem; padding: 8px 16px; }
+    .pd-corner-ornament { display: none; }
+}
+
+/* Entrance animations for info section children */
+.pd-info-section > * {
+    opacity: 0;
+    animation: pdSlideUp 0.6s ease-out forwards;
+}
+.pd-info-section > *:nth-child(1) { animation-delay: 0.1s; }
+.pd-info-section > *:nth-child(2) { animation-delay: 0.2s; }
+.pd-info-section > *:nth-child(3) { animation-delay: 0.3s; }
+.pd-info-section > *:nth-child(4) { animation-delay: 0.4s; }
+.pd-info-section > *:nth-child(5) { animation-delay: 0.5s; }
+.pd-info-section > *:nth-child(6) { animation-delay: 0.6s; }
+.pd-info-section > *:nth-child(7) { animation-delay: 0.7s; }
+.pd-info-section > *:nth-child(8) { animation-delay: 0.8s; }
+.pd-info-section > *:nth-child(9) { animation-delay: 0.9s; }
+
+@keyframes pdSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Image section entrance */
+.pd-image-section {
+    opacity: 0;
+    animation: pdImageReveal 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s forwards;
+}
+
+@keyframes pdImageReveal {
+    from { opacity: 0; transform: scale(0.94) translateY(18px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Premium ribbon entrance */
+.pd-premium-ribbon {
+    opacity: 0;
+    animation: pdRibbonReveal 0.7s ease-out 0.8s forwards;
+}
+
+@keyframes pdRibbonReveal {
+    from { opacity: 0; transform: translateY(-15px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Promo Code Chips */
+.pd-promo-chips {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; align-items: center;
+}
+.pd-promo-chips-label {
+    font-size: 0.68rem; color: var(--text-muted); font-weight: 500; margin-right: 2px;
+}
+.pd-promo-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 12px; border-radius: 50px;
+    background: linear-gradient(135deg, rgba(248,200,216,0.12), rgba(216,167,177,0.08));
+    border: 1.5px dashed rgba(181,68,110,0.25);
+    color: #b5446e; font-size: 0.72rem; font-weight: 700;
+    font-family: 'Courier New', monospace; letter-spacing: 0.08em;
+    cursor: pointer; transition: all 0.3s ease;
+}
+.pd-promo-chip:hover {
+    background: linear-gradient(135deg, rgba(248,200,216,0.25), rgba(216,167,177,0.15));
+    border-color: rgba(181,68,110,0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(181,68,110,0.12);
+}
+</style>
+
+<script>
+    const pageLoadTime = Date.now();
+
+    // Image Zoom Modal
+    const imageWrapper = document.getElementById('imageWrapper');
+    const zoomModal = document.getElementById('zoomModal');
+    const modalClose = document.getElementById('modalClose');
+    const modalBackdrop = document.getElementById('modalBackdrop');
+
+    imageWrapper.addEventListener('click', () => {
+        zoomModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+
+    function closeModal() {
+        zoomModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    modalClose.addEventListener('click', closeModal);
+    modalBackdrop.addEventListener('click', closeModal);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+    });
+
+    // ── Promo Code Validation ──
+    let appliedPromoCode = '';
+    let currentPrice = {{ product.price }};
+
+    window.applyPromo = async function() {
+        const input = document.getElementById('promoCodeInput');
+        const msg = document.getElementById('promoMessage');
+        const code = input.value.trim().toUpperCase();
+        
+        if (!code) {
+            msg.innerHTML = '<span class="pd-promo-error">Please enter a promo code</span>';
+            return;
+        }
+        
+        const btn = document.getElementById('applyPromoBtn');
+        btn.textContent = '...';
+        btn.disabled = true;
+        
+        try {
+            const response = await fetch('/api/validate-promo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ promo_code: code, product_id: {{ product.id }} })
+            });
+            const data = await response.json();
+            
+            if (data.valid) {
+                appliedPromoCode = code;
+                currentPrice = data.final_price;
+                
+                // Update price display
+                document.getElementById('priceAmount').textContent = data.final_price.toFixed(2);
+                const origEl = document.getElementById('originalPrice');
+                origEl.style.display = 'flex';
+                origEl.innerHTML = '<span style="text-decoration:line-through;opacity:0.5;">RM ' + data.original_price.toFixed(2) + '</span><span class="pd-promo-save-badge">Save RM ' + data.discount.toFixed(2) + '</span>';
+                
+                msg.innerHTML = '<span class="pd-promo-success">✅ ' + data.promo_title + ' applied! You save RM ' + data.discount.toFixed(2) + '</span>';
+                input.readOnly = true;
+                btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+                btn.title = "Remove Promo Code";
+                btn.style.background = 'rgba(229,115,115,0.15)';
+                btn.style.color = '#dc3545';
+                btn.disabled = false;
+                btn.onclick = removePromo;
+                
+                // Animate the price change
+                document.getElementById('priceDisplay').classList.add('pd-price-pop');
+                setTimeout(() => document.getElementById('priceDisplay').classList.remove('pd-price-pop'), 600);
+            } else {
+                msg.innerHTML = '<span class="pd-promo-error">❌ ' + data.error + '</span>';
+                btn.textContent = 'Apply';
+                btn.disabled = false;
+            }
+        } catch (err) {
+            msg.innerHTML = '<span class="pd-promo-error">Error validating code</span>';
+            btn.textContent = 'Apply';
+            btn.disabled = false;
+        }
+    };
+
+    // ── Business Hours Enforcement ──
+    const businessHours = {{ store_settings.business_hours_parsed | tojson | safe }};
+    
+    // Set min date to today for all date inputs
+    // Set min date to today (or +3 days if fully booked) for all date inputs
+    document.addEventListener('DOMContentLoaded', () => {
+        const statusMode = "{{ store_settings.store_status_mode }}";
+        let minDateStr;
+        if (statusMode === 'fully_booked') {
+            const targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + 3);
+            minDateStr = targetDate.toISOString().split('T')[0];
+        } else {
+            minDateStr = new Date().toISOString().split('T')[0];
+        }
+        
+        document.querySelectorAll('input[type="date"]').forEach(input => {
+            input.setAttribute('min', minDateStr);
+        });
+    });
+
+    window.handleDateSelect = function(inputEl, fieldId) {
+        const wrapper = document.getElementById('time_wrapper_' + fieldId);
+        const selectEl = document.getElementById('time_select_' + fieldId);
+        
+        if (!inputEl.value) {
+            wrapper.style.display = 'none';
+            selectEl.disabled = true;
+            return;
+        }
+
+        const selectedDate = new Date(inputEl.value);
+        const dayOfWeek = selectedDate.getDay(); // 0 (Sun) to 6 (Sat)
+        const dayRules = businessHours[dayOfWeek];
+
+        if (!dayRules || dayRules.closed || !dayRules.slots || dayRules.slots.length === 0) {
+            alert('Sorry, our store is closed on this day. Please select a different date.');
+            inputEl.value = '';
+            wrapper.style.display = 'none';
+            selectEl.disabled = true;
+            return;
+        }
+
+        // Populate time slots
+        selectEl.innerHTML = '<option value="">-- Select Time Slot --</option>';
+        dayRules.slots.forEach(slot => {
+            const option = document.createElement('option');
+            const slotText = slot.start + ' - ' + slot.end;
+            option.value = slotText;
+            option.textContent = slotText;
+            selectEl.appendChild(option);
+        });
+
+        wrapper.style.display = 'block';
+        selectEl.disabled = false;
+    };
+
+    window.removePromo = function() {
+        appliedPromoCode = '';
+        currentPrice = {{ product.price }};
+        
+        document.getElementById('priceAmount').textContent = currentPrice.toFixed(2);
+        document.getElementById('originalPrice').style.display = 'none';
+        
+        const input = document.getElementById('promoCodeInput');
+        input.value = '';
+        input.readOnly = false;
+        
+        const btn = document.getElementById('applyPromoBtn');
+        btn.textContent = 'Apply';
+        btn.title = "Apply Promo Code";
+        btn.onclick = applyPromo;
+        btn.style.background = '';
+        btn.style.color = '';
+        
+        document.getElementById('promoMessage').innerHTML = '';
+        
+        document.getElementById('priceDisplay').classList.add('pd-price-pop');
+        setTimeout(() => document.getElementById('priceDisplay').classList.remove('pd-price-pop'), 600);
+    };
+
+    // Enter key on promo input
+    document.getElementById('promoCodeInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); applyPromo(); }
+    });
+
+    // Checkout Modal Logic
+    const checkoutModal = document.getElementById('checkoutModal');
+    const checkoutModalClose = document.getElementById('checkoutModalClose');
+    const checkoutModalBackdrop = document.getElementById('checkoutModalBackdrop');
+
+    function closeCheckoutModal() {
+        checkoutModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    checkoutModalClose.addEventListener('click', closeCheckoutModal);
+    checkoutModalBackdrop.addEventListener('click', closeCheckoutModal);
+
+    // Order button opens checkout modal
+    document.getElementById('orderBtn').addEventListener('click', function() {
+        checkoutModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+
+    // Handle checkout form submission
+    document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const btn = document.getElementById('confirmOrderBtn');
+        const originalContent = btn.innerHTML;
+        
+        // Dynamic limits injected from backend
+        const fastSubmitLimit = {{ security_settings.fast_submit_limit_ms|default(3000) }};
+        const spamWindowSeconds = {{ security_settings.spam_time_window_mins|default(10) }} * 60;
+        
+        // Anti-Spam Pillar 2: Fast-Submit Cooldown Timer
+        if (Date.now() - pageLoadTime < fastSubmitLimit) {
+            btn.disabled = true;
+            let secondsLeft = 5;
+            
+            const timer = setInterval(() => {
+                secondsLeft--;
+                btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Wait ${secondsLeft}s`;
+                if (secondsLeft <= 0) {
+                    clearInterval(timer);
+                    btn.disabled = false;
+                    btn.innerHTML = originalContent;
+                }
+            }, 1000);
+            btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Wait 5s`;
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;">
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+            </svg>
+            Processing...
+        `;
+
+        // Anti-Spam Pillar 1: Honeypot variable
+        const honeypotVal = document.getElementById('alt_shipping_zipcode').value;
+
+        // Gather checkout data
+        const formData = new FormData(this);
+        const checkoutData = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch('/api/order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    product_id: {{ product.id }},
+                    price: currentPrice,
+                    promo_code: appliedPromoCode,
+                    alt_shipping_zipcode: honeypotVal,
+                    checkout_data: checkoutData
+                })
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                btn.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Order Placed!
+                `;
+                setTimeout(() => {
+                    window.location.href = '/invoice/' + data.order_id;
+                }, 800);
+            } else if (data.error === 'spam_limit_reached') {
+                btn.disabled = true;
+                let timeLeft = spamWindowSeconds;
+                
+                const timer = setInterval(() => {
+                    timeLeft--;
+                    const m = Math.floor(timeLeft / 60);
+                    const s = timeLeft % 60;
+                    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Locked (${m}:${s.toString().padStart(2, '0')})`;
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        btn.disabled = false;
+                        btn.innerHTML = originalContent;
+                    }
+                }, 1000);
+                btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Locked`;
+            } else {
+                alert(data.error || 'Failed to place order.');
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Error placing order. Please try again.');
+            btn.disabled = false;
+            btn.innerHTML = originalContent;
+        }
+    });
+
+    // Fill promo code from chip click
+    window.fillPromoCode = function(code) {
+        const input = document.getElementById('promoCodeInput');
+        if (input.readOnly) return; // Already applied
+        input.value = code;
+        applyPromo();
+    };
+
+    // Auto-fill promo code from URL parameter ?promo=CODE
+    (function() {
+        const params = new URLSearchParams(window.location.search);
+        const urlCode = params.get('promo');
+        if (urlCode) {
+            const input = document.getElementById('promoCodeInput');
+            input.value = urlCode.toUpperCase();
+            // Auto-apply after a short delay so page is fully loaded
+            setTimeout(() => applyPromo(), 500);
+        }
+    })();
+</script>
+
+{% endblock %}

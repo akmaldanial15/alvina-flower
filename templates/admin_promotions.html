@@ -1,0 +1,680 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="animate-fade-in" style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+        <div>
+            <h1 class="elegant-title" style="font-size: 2.5rem;">Promotions</h1>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.3rem;">Manage deals, promo codes & special offers</p>
+        </div>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline" style="text-decoration: none;">Back to Dashboard</a>
+    </header>
+
+    <!-- ═══ STATS ROW ═══ -->
+    <div class="ap-stats-row">
+        <div class="ap-stat-card ap-stat-active">
+            <div class="ap-stat-icon">🟢</div>
+            <div class="ap-stat-info">
+                <span class="ap-stat-value">{{ active_count }}</span>
+                <span class="ap-stat-label">Active</span>
+            </div>
+            <div class="ap-stat-glow"></div>
+        </div>
+        <div class="ap-stat-card ap-stat-scheduled">
+            <div class="ap-stat-icon">🟡</div>
+            <div class="ap-stat-info">
+                <span class="ap-stat-value">{{ scheduled_count }}</span>
+                <span class="ap-stat-label">Scheduled</span>
+            </div>
+        </div>
+        <div class="ap-stat-card ap-stat-expired">
+            <div class="ap-stat-icon">🔴</div>
+            <div class="ap-stat-info">
+                <span class="ap-stat-value">{{ expired_count }}</span>
+                <span class="ap-stat-label">Expired</span>
+            </div>
+        </div>
+        <div class="ap-stat-card ap-stat-uses">
+            <div class="ap-stat-icon">📊</div>
+            <div class="ap-stat-info">
+                <span class="ap-stat-value">{{ total_uses }}</span>
+                <span class="ap-stat-label">Total Uses</span>
+            </div>
+        </div>
+        <div class="ap-stat-card ap-stat-savings">
+            <div class="ap-stat-icon">💰</div>
+            <div class="ap-stat-info">
+                <span class="ap-stat-value">RM {{ "%.0f"|format(total_discount_given) }}</span>
+                <span class="ap-stat-label">Total Discounts</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ PROMOTIONS GRID ═══ -->
+    <div style="margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 class="elegant-title" style="font-size: 1.6rem;">All Promotions</h2>
+            <span style="color: var(--text-muted); font-size: 0.85rem;">{{ total_promos }} total</span>
+        </div>
+
+        {% if promo_list %}
+        <div class="ap-promo-grid">
+            {% for item in promo_list %}
+            {% set p = item.promo %}
+            {% set status = item.status %}
+            <div class="ap-promo-card ap-status-{{ status }}" style="--card-i: {{ loop.index0 }};">
+                <!-- Status Ribbon -->
+                <div class="ap-card-ribbon ap-ribbon-{{ status }}">
+                    {% if status == 'active' %}🟢 Active
+                    {% elif status == 'scheduled' %}🟡 Scheduled
+                    {% elif status == 'expired' %}🔴 Expired
+                    {% elif status == 'exhausted' %}⚪ Exhausted
+                    {% else %}⚫ Inactive{% endif %}
+                </div>
+
+                <!-- Card Header -->
+                <div class="ap-card-header">
+                    <h3 class="ap-card-title">{{ p.title }}</h3>
+                    {% if p.promo_code %}
+                    <div class="ap-promo-code-badge">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                        {{ p.promo_code }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Description -->
+                <p class="ap-card-desc">{{ p.description }}</p>
+
+                <!-- Discount Display -->
+                <div class="ap-card-discount">
+                    <span class="ap-discount-value">
+                        {% if p.discount_type == 'fixed' %}RM {{ "%.0f"|format(p.discount_value or 0) }}{% else %}{{ "%.0f"|format(p.discount_value or 0) }}%{% endif %}
+                    </span>
+                    <span class="ap-discount-label">
+                        {% if p.discount_type == 'fixed' %}Fixed Discount{% else %}Percentage Off{% endif %}
+                    </span>
+                </div>
+
+                <!-- Countdown Timer (for promos with end_date) -->
+                {% if p.end_date and status in ['active', 'scheduled'] %}
+                <div class="ap-countdown" data-end="{{ p.end_date }}T23:59:59">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span class="ap-countdown-text">Loading...</span>
+                </div>
+                {% endif %}
+
+                <!-- Info Pills -->
+                <div class="ap-card-pills">
+                    {% if p.start_date or p.end_date %}
+                    <span class="ap-pill ap-pill-date">
+                        📅 {{ p.start_date or '...' }} → {{ p.end_date or '∞' }}
+                    </span>
+                    {% endif %}
+                    {% if p.applies_to and p.applies_to != 'all' %}
+                    <span class="ap-pill ap-pill-target">
+                        🎯 {{ p.applies_to|capitalize }}{% if p.target_categories %}: {{ p.target_categories }}{% endif %}
+                    </span>
+                    {% else %}
+                    <span class="ap-pill ap-pill-all">🌍 All Products</span>
+                    {% endif %}
+                    {% if p.max_uses %}
+                    <span class="ap-pill ap-pill-uses">
+                        📊 {{ p.times_used or 0 }}/{{ p.max_uses }} used
+                    </span>
+                    {% endif %}
+                    {% if p.min_order_amount and p.min_order_amount > 0 %}
+                    <span class="ap-pill">💵 Min RM {{ "%.0f"|format(p.min_order_amount) }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Card Actions -->
+                <div class="ap-card-actions">
+                    <form action="{{ url_for('toggle_promotion', id=p.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="ap-action-btn ap-toggle-btn" title="Toggle Active">
+                            {% if p.is_active %}
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+                                Deactivate
+                            {% else %}
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                Activate
+                            {% endif %}
+                        </button>
+                    </form>
+                    <a href="{{ url_for('edit_promotion', id=p.id) }}" class="ap-action-btn ap-edit-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        Edit
+                    </a>
+                    <!-- Duplicate Button -->
+                    <form action="{{ url_for('duplicate_promotion', id=p.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="ap-action-btn ap-duplicate-btn" title="Duplicate this promotion">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            Duplicate
+                        </button>
+                    </form>
+                    <!-- Usage History Button -->
+                    <a href="{{ url_for('promo_usage', id=p.id) }}" class="ap-action-btn ap-usage-btn" title="View usage history">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+                        Usage ({{ p.times_used or 0 }})
+                    </a>
+                    <form action="{{ url_for('delete_promotion', id=p.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this promotion?');">
+                        <button type="submit" class="ap-action-btn ap-delete-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            Delete
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Liquid background effect -->
+                <div class="ap-card-liquid"></div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="glass-panel" style="padding: 3rem; text-align: center;">
+            <p style="font-size: 3rem; margin-bottom: 1rem;">🏷️</p>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">No promotions yet. Create your first one below!</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- ═══ ADD NEW PROMOTION ═══ -->
+    <div class="ap-create-section">
+        <div class="ap-create-header" onclick="document.getElementById('createForm').classList.toggle('ap-form-open')">
+            <h2 class="elegant-title" style="font-size: 1.6rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span class="ap-create-icon">✨</span> Create New Promotion
+            </h2>
+            <svg class="ap-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        
+        <form id="createForm" action="{{ url_for('admin_promotions') }}" method="POST" enctype="multipart/form-data" class="ap-create-form">
+            
+            <!-- Row 1: Basic Info -->
+            <div class="ap-form-section">
+                <h3 class="ap-form-section-title">📝 Basic Information</h3>
+                <div class="ap-form-grid-2">
+                    <div class="ap-field">
+                        <label>Promotion Title *</label>
+                        <input type="text" name="title" required placeholder="e.g. Spring Special Sale!">
+                    </div>
+                    <div class="ap-field">
+                        <label>Discount Display Text *</label>
+                        <input type="text" name="discount" required placeholder="e.g. 15% OFF, Buy 1 Free 1">
+                    </div>
+                </div>
+                <div class="ap-field">
+                    <label>Description *</label>
+                    <textarea name="description" required rows="2" placeholder="Describe the promotion..."></textarea>
+                </div>
+            </div>
+
+            <!-- Row 2: Promo Code & Discount -->
+            <div class="ap-form-section">
+                <h3 class="ap-form-section-title">🏷️ Promo Code & Discount</h3>
+                <div class="ap-form-grid-3">
+                    <div class="ap-field">
+                        <label>Promo Code</label>
+                        <div class="ap-code-input-wrap">
+                            <input type="text" name="promo_code" id="promoCodeField" placeholder="e.g. ALV-SPRING15" style="text-transform: uppercase;">
+                            <button type="button" class="ap-generate-btn" onclick="generateCode()" title="Auto-generate a unique code">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                                Generate
+                            </button>
+                        </div>
+                    </div>
+                    <div class="ap-field">
+                        <label>Discount Type</label>
+                        <select name="discount_type">
+                            <option value="percentage">Percentage (%)</option>
+                            <option value="fixed">Fixed Amount (RM)</option>
+                        </select>
+                    </div>
+                    <div class="ap-field">
+                        <label>Discount Value</label>
+                        <input type="number" name="discount_value" step="0.01" min="0" placeholder="e.g. 15">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 3: Schedule -->
+            <div class="ap-form-section">
+                <h3 class="ap-form-section-title">📅 Schedule</h3>
+                <div class="ap-form-grid-2">
+                    <div class="ap-field">
+                        <label>Start Date</label>
+                        <input type="date" name="start_date">
+                    </div>
+                    <div class="ap-field">
+                        <label>End Date</label>
+                        <input type="date" name="end_date">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 4: Targeting -->
+            <div class="ap-form-section">
+                <h3 class="ap-form-section-title">🎯 Targeting</h3>
+                <div class="ap-form-grid-3">
+                    <div class="ap-field">
+                        <label>Applies To</label>
+                        <select name="applies_to" id="appliesTo" onchange="toggleTargeting(this.value)">
+                            <option value="all">All Products</option>
+                            <option value="category">Specific Categories</option>
+                            <option value="products">Specific Products</option>
+                        </select>
+                    </div>
+                    <div class="ap-field" id="catField" style="display:none;">
+                        <label>Target Categories</label>
+                        <select name="target_categories" multiple style="min-height: 80px;">
+                            {% for cat in categories %}
+                            <option value="{{ cat.category }}">{{ cat.category }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="ap-field" id="prodField" style="display:none;">
+                        <label>Target Products</label>
+                        <select name="target_product_ids" multiple style="min-height: 80px;">
+                            {% for prod in products_list %}
+                            <option value="{{ prod.id }}">{{ prod.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 5: Limits & Extras -->
+            <div class="ap-form-section">
+                <h3 class="ap-form-section-title">⚙️ Limits & Settings</h3>
+                <div class="ap-form-grid-4">
+                    <div class="ap-field">
+                        <label>Max Uses</label>
+                        <input type="number" name="max_uses" min="1" placeholder="∞ unlimited">
+                    </div>
+                    <div class="ap-field">
+                        <label>Min Order (RM)</label>
+                        <input type="number" name="min_order_amount" step="0.01" min="0" placeholder="0">
+                    </div>
+                    <div class="ap-field">
+                        <label>Max Discount (RM)</label>
+                        <input type="number" name="max_discount_amount" step="0.01" min="0" placeholder="∞ no cap">
+                    </div>
+                    <div class="ap-field">
+                        <label>Sort Order</label>
+                        <input type="number" name="sort_order" value="0" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 6: Banner & Visual -->
+            <div class="ap-form-section">
+                <h3 class="ap-form-section-title">🖼️ Visual</h3>
+                <div class="ap-form-grid-2">
+                    <div class="ap-field">
+                        <label>Banner Image</label>
+                        <input type="file" name="banner_image" accept="image/*">
+                    </div>
+                    <div class="ap-field">
+                        <label>Banner Color</label>
+                        <input type="text" name="banner_color" placeholder="e.g. #f8c8d8 or gradient">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toggles + Submit -->
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 1rem; flex-wrap: wrap; gap: 1rem;">
+                <div style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" name="is_active" id="is_active_new" checked style="width: 1.2rem; height: 1.2rem;">
+                        <label for="is_active_new" style="color: var(--text-muted); font-weight: 500;">Set as Active Immediately</label>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" name="is_public" id="is_public_new" style="width: 1.2rem; height: 1.2rem;">
+                        <label for="is_public_new" style="color: var(--text-muted); font-weight: 500;" title="If checked, this code will be advertised directly on applicable product pages.">Visible on Storefront</label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="min-width: 200px; padding: 0.9rem 2rem;">
+                    ✨ Create Promotion
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<style>
+/* ═══ STAT CARDS ═══ */
+.ap-stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+.ap-stat-card {
+    position: relative;
+    overflow: hidden;
+    padding: 1.3rem 1.5rem;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    animation: apStatIn 0.6s ease-out forwards;
+    animation-delay: calc(var(--i, 0) * 0.08s);
+}
+.ap-stat-card:nth-child(1) { --i: 0; }
+.ap-stat-card:nth-child(2) { --i: 1; }
+.ap-stat-card:nth-child(3) { --i: 2; }
+.ap-stat-card:nth-child(4) { --i: 3; }
+.ap-stat-card:nth-child(5) { --i: 4; }
+.ap-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(200,146,159,0.15);
+}
+.ap-stat-icon { font-size: 1.6rem; }
+.ap-stat-info { display: flex; flex-direction: column; }
+.ap-stat-value { font-size: 1.6rem; font-weight: 700; font-family: 'Playfair Display', serif; color: var(--text-main); }
+.ap-stat-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+.ap-stat-glow {
+    position: absolute; right: -20px; top: -20px;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(76,175,80,0.15), transparent);
+    animation: apGlowPulse 3s ease-in-out infinite;
+}
+@keyframes apStatIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes apGlowPulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.3); opacity: 1; }
+}
+
+/* ═══ PROMO GRID ═══ */
+.ap-promo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 1.5rem;
+}
+.ap-promo-card {
+    position: relative;
+    overflow: hidden;
+    padding: 1.8rem;
+    border-radius: 24px;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(16px);
+    border: 1.5px solid var(--border);
+    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    animation: apCardIn 0.6s ease-out forwards;
+    animation-delay: calc(var(--card-i) * 0.1s);
+    opacity: 0;
+}
+@keyframes apCardIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.ap-promo-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(200,146,159,0.18);
+    border-color: var(--primary);
+}
+.ap-promo-card:hover .ap-card-liquid {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+/* Liquid bg effect */
+.ap-card-liquid {
+    position: absolute;
+    bottom: -60px; right: -60px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(248,200,216,0.2), transparent 70%);
+    opacity: 0;
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Status ribbon */
+.ap-card-ribbon {
+    position: absolute;
+    top: 1rem; right: -0.5rem;
+    padding: 4px 14px 4px 10px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border-radius: 6px 0 0 6px;
+    z-index: 2;
+}
+.ap-ribbon-active { background: linear-gradient(135deg, #c8f7c5, #a3e9a0); color: #1a5e1a; }
+.ap-ribbon-scheduled { background: linear-gradient(135deg, #fff8c5, #fde68a); color: #7c6a0a; }
+.ap-ribbon-expired { background: linear-gradient(135deg, #fecdd3, #fca5a5); color: #7f1d1d; }
+.ap-ribbon-exhausted { background: linear-gradient(135deg, #e5e7eb, #d1d5db); color: #4b5563; }
+.ap-ribbon-inactive { background: linear-gradient(135deg, #e5e7eb, #d1d5db); color: #6b7280; }
+
+.ap-card-header { position: relative; z-index: 1; margin-bottom: 0.6rem; }
+.ap-card-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 600; color: var(--text-main); }
+
+.ap-promo-code-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    margin-top: 0.5rem;
+    padding: 5px 14px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #2a1622, #3d2233);
+    color: #f8c8d8;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    font-family: 'Courier New', monospace;
+}
+
+.ap-card-desc { position: relative; z-index: 1; color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 1rem; }
+
+.ap-card-discount {
+    position: relative; z-index: 1;
+    display: flex; align-items: baseline; gap: 8px;
+    margin-bottom: 1rem;
+}
+.ap-discount-value {
+    font-size: 2rem; font-weight: 800;
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(135deg, var(--text-main), #b5446e);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.ap-discount-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* Countdown */
+.ap-countdown {
+    position: relative; z-index: 1;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 50px;
+    background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(245,158,11,0.04));
+    border: 1px solid rgba(245,158,11,0.2);
+    color: #d97706; font-size: 0.72rem; font-weight: 600;
+    margin-bottom: 0.8rem;
+}
+
+/* Pills */
+.ap-card-pills { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.2rem; }
+.ap-pill {
+    padding: 4px 10px; border-radius: 50px;
+    font-size: 0.68rem; font-weight: 500;
+    background: rgba(248,200,216,0.12); border: 1px solid rgba(248,200,216,0.25);
+    color: var(--text-muted);
+}
+.ap-pill-date { background: rgba(59,130,246,0.08); border-color: rgba(59,130,246,0.2); color: #2563eb; }
+.ap-pill-target { background: rgba(168,85,247,0.08); border-color: rgba(168,85,247,0.2); color: #7c3aed; }
+.ap-pill-uses { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.2); color: #d97706; }
+.ap-pill-all { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.2); color: #16a34a; }
+
+/* Card actions */
+.ap-card-actions { position: relative; z-index: 1; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.ap-action-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 6px 14px; border-radius: 10px;
+    font-size: 0.72rem; font-weight: 600;
+    border: 1px solid var(--border); background: rgba(255,255,255,0.7);
+    color: var(--text-muted); cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+.ap-action-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.ap-toggle-btn:hover { background: rgba(59,130,246,0.08); border-color: #93c5fd; color: #2563eb; }
+.ap-edit-btn:hover { background: rgba(168,85,247,0.08); border-color: #c4b5fd; color: #7c3aed; }
+.ap-delete-btn:hover { background: rgba(239,68,68,0.08); border-color: #fca5a5; color: #dc2626; }
+.ap-duplicate-btn:hover { background: rgba(34,197,94,0.08); border-color: #86efac; color: #16a34a; }
+.ap-usage-btn:hover { background: rgba(245,158,11,0.08); border-color: #fde68a; color: #d97706; }
+
+/* ═══ CREATE SECTION ═══ */
+.ap-create-section {
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(16px);
+    border: 1.5px solid var(--border);
+    border-radius: 24px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+.ap-create-header {
+    padding: 1.5rem 2rem;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+.ap-create-header:hover { background: rgba(248,200,216,0.06); }
+.ap-create-icon {
+    display: inline-flex;
+    animation: apSparkle 2s ease-in-out infinite;
+}
+@keyframes apSparkle {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.2) rotate(10deg); }
+}
+.ap-chevron { transition: transform 0.3s ease; }
+.ap-create-form {
+    max-height: 0; overflow: hidden; opacity: 0;
+    padding: 0 2rem;
+    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.ap-create-form.ap-form-open {
+    max-height: 2000px; opacity: 1;
+    padding: 0 2rem 2rem;
+}
+
+/* Code input with generate button */
+.ap-code-input-wrap {
+    display: flex; gap: 0; border-radius: 12px; overflow: hidden;
+    border: 1.5px solid var(--border); transition: all 0.3s ease;
+}
+.ap-code-input-wrap:focus-within {
+    border-color: var(--primary); box-shadow: 0 0 0 3px rgba(248,200,216,0.25);
+}
+.ap-code-input-wrap input {
+    flex: 1; border: none !important; border-radius: 0 !important;
+    box-shadow: none !important;
+}
+.ap-generate-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 0 14px; white-space: nowrap;
+    background: linear-gradient(135deg, #f8c8d8, #f1a9c3);
+    color: white; font-size: 0.75rem; font-weight: 600;
+    border: none; cursor: pointer; transition: all 0.3s ease;
+    font-family: inherit;
+}
+.ap-generate-btn:hover { filter: brightness(1.08); }
+
+/* Form sections */
+.ap-form-section {
+    padding: 1.2rem 0;
+    border-bottom: 1px solid rgba(248,200,216,0.2);
+}
+.ap-form-section:last-of-type { border-bottom: none; }
+.ap-form-section-title {
+    font-size: 0.85rem; font-weight: 600; color: var(--text-main);
+    margin-bottom: 1rem; letter-spacing: 0.02em;
+}
+.ap-form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.ap-form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+.ap-form-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.ap-field { display: flex; flex-direction: column; gap: 0.4rem; }
+.ap-field label {
+    font-size: 0.75rem; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.06em;
+}
+.ap-field input, .ap-field textarea, .ap-field select {
+    padding: 0.7rem 1rem; border-radius: 12px;
+    border: 1.5px solid var(--border); background: rgba(255,255,255,0.6);
+    font-family: inherit; font-size: 0.9rem; color: var(--text-main);
+    transition: all 0.3s ease; outline: none;
+}
+.ap-field input:focus, .ap-field textarea:focus, .ap-field select:focus {
+    border-color: var(--primary); box-shadow: 0 0 0 3px rgba(248,200,216,0.25);
+    background: rgba(255,255,255,0.9);
+}
+
+@media (max-width: 768px) {
+    .ap-promo-grid { grid-template-columns: 1fr; }
+    .ap-form-grid-2, .ap-form-grid-3, .ap-form-grid-4 { grid-template-columns: 1fr; }
+    .ap-stats-row { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+
+<script>
+function toggleTargeting(value) {
+    document.getElementById('catField').style.display = value === 'category' ? 'flex' : 'none';
+    document.getElementById('prodField').style.display = value === 'products' ? 'flex' : 'none';
+}
+
+// Auto-generate voucher code
+async function generateCode() {
+    const btn = event.target.closest('.ap-generate-btn');
+    const input = document.getElementById('promoCodeField');
+    const origHTML = btn.innerHTML;
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin .6s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>';
+    try {
+        const res = await fetch('/admin/promotions/generate-code');
+        const data = await res.json();
+        input.value = data.code;
+        // Flash green briefly
+        input.style.borderColor = '#22c55e';
+        input.style.background = 'rgba(34,197,94,0.06)';
+        setTimeout(() => { input.style.borderColor = ''; input.style.background = ''; }, 1500);
+    } catch (e) {
+        input.value = 'ALV-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+    }
+    btn.innerHTML = origHTML;
+}
+
+// Countdown timers
+function updateCountdowns() {
+    document.querySelectorAll('.ap-countdown').forEach(el => {
+        const end = new Date(el.dataset.end);
+        const now = new Date();
+        const diff = end - now;
+        const text = el.querySelector('.ap-countdown-text');
+        if (diff <= 0) {
+            text.textContent = 'Expired';
+            el.style.color = '#dc2626';
+            el.style.borderColor = 'rgba(239,68,68,0.2)';
+            el.style.background = 'rgba(239,68,68,0.06)';
+        } else {
+            const days = Math.floor(diff / 86400000);
+            const hrs = Math.floor((diff % 86400000) / 3600000);
+            const mins = Math.floor((diff % 3600000) / 60000);
+            if (days > 0) {
+                text.textContent = days + 'd ' + hrs + 'h remaining';
+            } else if (hrs > 0) {
+                text.textContent = hrs + 'h ' + mins + 'm remaining';
+            } else {
+                text.textContent = mins + 'm remaining';
+            }
+        }
+    });
+}
+updateCountdowns();
+setInterval(updateCountdowns, 60000);
+</script>
+<style>@keyframes spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }</style>
+{% endblock %}

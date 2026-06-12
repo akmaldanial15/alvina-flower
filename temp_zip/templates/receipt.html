@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt - Order {{ order.id }}</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #b5446e;
+            --text-main: #2a1622;
+            --text-muted: #665b60;
+            --border: #f2e1e8;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            background: #fff;
+            margin: 0;
+            padding: 40px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .receipt-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        /* Header */
+        .rcpt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 30px;
+            margin-bottom: 30px;
+        }
+        .rcpt-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .rcpt-info {
+            text-align: right;
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .rcpt-title {
+            font-size: 24px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            margin-bottom: 5px;
+        }
+        /* Meta Info */
+        .rcpt-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+        .meta-box {
+            background: #fdfafb;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            width: 48%;
+        }
+        .meta-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .meta-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .rcpt-id {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(240,160,48,0.2);
+            color: #5a4010;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        /* Table */
+        .rcpt-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+        }
+        .rcpt-table th {
+            background: #fdfafb;
+            padding: 15px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border);
+        }
+        .rcpt-table td {
+            padding: 20px 15px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+        .item-details {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .item-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid var(--border);
+        }
+        .item-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        /* Totals */
+        .rcpt-totals {
+            width: 350px;
+            margin-left: auto;
+            background: #fdfafb;
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid var(--border);
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 15px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .total-row.discount {
+            color: #2E7D32;
+            font-weight: 600;
+        }
+        .total-row.final {
+            border-top: 2px solid var(--border);
+            margin-top: 15px;
+            padding-top: 20px;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 0;
+        }
+        /* Footer */
+        .rcpt-footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+            padding-top: 30px;
+            border-top: 1px dashed var(--border);
+        }
+        
+        /* Print Styles */
+        @media print {
+            body { padding: 0; background: #fff; }
+            .no-print { display: none !important; }
+            .meta-box, .rcpt-table th, .rcpt-totals { background: #fdfafb !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .rcpt-id { background: rgba(240,160,48,0.2) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+        
+        /* Interactive Buttons (Hidden on Print) */
+        .print-actions {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #b5446e, #d4728e);
+            color: #fff;
+            border: none;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(181,68,110,0.3);
+        }
+        .btn-outline {
+            background: #fff;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+        .btn-outline:hover {
+            background: #fdfafb;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="receipt-container">
+        <!-- Header -->
+        <div class="rcpt-header">
+            <div class="rcpt-logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="3.5" fill="#d8a7b1"/>
+                    <ellipse cx="12" cy="5.5" rx="3" ry="4.5" fill="none" stroke="#b5446e" stroke-width="1.5" transform="rotate(0 12 12)"/>
+                    <ellipse cx="12" cy="5.5" rx="3" ry="4.5" fill="none" stroke="#b5446e" stroke-width="1.5" transform="rotate(72 12 12)"/>
+                    <ellipse cx="12" cy="5.5" rx="3" ry="4.5" fill="none" stroke="#b5446e" stroke-width="1.5" transform="rotate(144 12 12)"/>
+                    <ellipse cx="12" cy="5.5" rx="3" ry="4.5" fill="none" stroke="#b5446e" stroke-width="1.5" transform="rotate(216 12 12)"/>
+                    <ellipse cx="12" cy="5.5" rx="3" ry="4.5" fill="none" stroke="#b5446e" stroke-width="1.5" transform="rotate(288 12 12)"/>
+                </svg>
+                <div style="display: flex; flex-direction: column; align-items: flex-start; margin-left: 8px;">
+                    <span style="line-height: 1.2;">Lvinas florist & gifts</span>
+                    <span style="font-size: 0.65rem; opacity: 0.8; font-weight: normal;">Floralz Best Ent</span>
+                </div>
+            </div>
+            <div class="rcpt-info">
+                <div class="rcpt-title">Official Receipt</div>
+                <div style="font-weight: 700; color: #2E7D32; font-size: 0.9rem; margin-bottom: 6px; display: inline-flex; align-items: center; gap: 4px;">
+                    🟢 PAID & VERIFIED
+                </div>
+                <div style="font-weight: 600; font-size: 0.8rem; margin-bottom: 4px;">Receipt No: <span style="font-family: monospace; background: #e8f5e9; color: #2e7d32; padding: 2px 6px; border-radius: 4px;">{{ order.receipt_number }}</span></div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Verified on: {{ order.payment_verified_at }}</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">Generated on {{ now }}</div>
+            </div>
+        </div>
+
+        <!-- Meta -->
+        <div class="rcpt-meta">
+            <div class="meta-box">
+                <div class="meta-label">Order Details</div>
+                <div style="margin-bottom: 8px;">Order ID: <span class="rcpt-id">{{ order.id }}</span></div>
+                <div style="margin-bottom: 6px;">Date: <span class="meta-value">{{ order.created_at }}</span></div>
+                <div>Payment Method: <span class="meta-value" style="font-weight: 600;">{{ order.payment_method }}</span></div>
+            </div>
+            <div class="meta-box">
+                <div class="meta-label">Customer Details</div>
+                {% if order.checkout_data %}
+                    {% for key, value in order.checkout_data.items() %}
+                        <div style="margin-bottom: 4px;">{{ key|replace('_', ' ')|title }}: <span class="meta-value">{{ value if value else '-' }}</span></div>
+                    {% endfor %}
+                {% else %}
+                    <div style="font-style: italic; color: var(--text-muted);">No custom details</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Items Table -->
+        <table class="rcpt-table">
+            <thead>
+                <tr>
+                    <th>Item Description</th>
+                    <th style="text-align: center;">Qty</th>
+                    <th style="text-align: right;">Unit Price</th>
+                    <th style="text-align: right;">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>
+                        <div class="item-details">
+                            <div class="item-img" style="background-image: url('{{ item.image if item.image else '/static/images/flower1.png' }}');"></div>
+                            <div class="item-name">{{ item.name }}</div>
+                        </div>
+                    </td>
+                    <td style="text-align: center; font-weight: 600;">{{ item.quantity }}</td>
+                    <td style="text-align: right;">RM {{ "%.2f"|format(item.price) }}</td>
+                    <td style="text-align: right; font-weight: 600;">RM {{ "%.2f"|format(item.price * item.quantity) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Totals -->
+        <div class="rcpt-totals">
+            <div class="total-row">
+                <span>Subtotal</span>
+                <span>RM {{ "%.2f"|format(order.original_amount) }}</span>
+            </div>
+            {% if order.discount_amount > 0 %}
+            <div class="total-row discount">
+                <span>Discount ({{ order.promo_code_used }})</span>
+                <span>- RM {{ "%.2f"|format(order.discount_amount) }}</span>
+            </div>
+            {% endif %}
+            <div class="total-row final">
+                <span>Total Paid</span>
+                <span>RM {{ "%.2f"|format(order.total_amount) }}</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="rcpt-footer">
+            <div style="font-weight: 600; margin-bottom: 8px; color: var(--text-main);">Thank you for choosing Lvinas florist & gifts! 🌸</div>
+            <div>We poured love into every petal. If you have any questions, please contact us.</div>
+            <div style="margin-top: 10px; font-size: 12px; font-family: monospace;">This is a computer-generated receipt. No signature is required.</div>
+        </div>
+    </div>
+
+    <!-- Interactive Actions -->
+    <div class="print-actions no-print">
+        <button type="button" class="btn btn-outline" onclick="closeReceipt()">Close</button>
+        <button type="button" class="btn btn-primary" onclick="window.print();">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Print / Save as PDF
+        </button>
+    </div>
+
+    <script>
+        // Auto-trigger print when the page loads if it was opened specifically for printing/downloading
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('print') || urlParams.get('download') === 'pdf') {
+                window.print();
+            }
+        };
+
+        function closeReceipt() {
+            // Attempt to close the window/tab
+            window.close();
+            
+            // If the window is still open after 100ms (window.close was blocked by browser security),
+            // redirect the user back to where they came from or back to the tracking page.
+            setTimeout(() => {
+                if (document.referrer && document.referrer !== window.location.href) {
+                    window.location.href = document.referrer;
+                } else {
+                    window.location.href = "/track?id={{ order.id }}";
+                }
+            }, 100);
+        }
+    </script>
+</body>
+</html>

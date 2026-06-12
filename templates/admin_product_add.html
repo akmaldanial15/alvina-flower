@@ -1,0 +1,430 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="add-product-page">
+    <!-- Animated background particles -->
+    <div class="ap-particles" id="apParticles"></div>
+
+    <!-- Breadcrumb Navigation -->
+    <nav class="ap-breadcrumb animate-slide-down">
+        <a href="{{ url_for('admin_dashboard') }}" class="ap-breadcrumb-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Dashboard
+        </a>
+        <svg class="ap-breadcrumb-sep" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        <a href="{{ url_for('admin_products') }}" class="ap-breadcrumb-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            Products
+        </a>
+        <svg class="ap-breadcrumb-sep" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        <span class="ap-breadcrumb-current">Add New</span>
+    </nav>
+
+    <!-- Page Header with animated accent -->
+    <header class="ap-header animate-slide-up">
+        <div class="ap-header-content">
+            <div class="ap-header-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <line x1="12" y1="9" x2="12" y2="15"/>
+                    <line x1="9" y1="12" x2="15" y2="12"/>
+                </svg>
+            </div>
+            <div>
+                <h1 class="ap-title">Create New Product</h1>
+                <p class="ap-subtitle">Add a beautiful new floral arrangement to your collection</p>
+            </div>
+        </div>
+        <a href="{{ url_for('admin_products') }}" class="ap-back-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Back to Products
+        </a>
+    </header>
+
+    <!-- Main Form Container -->
+    <form action="{{ url_for('admin_add_product') }}" method="POST" enctype="multipart/form-data" class="ap-form" id="addProductForm">
+        
+        <div class="ap-form-grid">
+            <!-- Left Column: Product Details -->
+            <div class="ap-form-left">
+                
+                <!-- Product Identity Section -->
+                <section class="ap-section ap-stagger-1">
+                    <div class="ap-section-header">
+                        <div class="ap-section-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </div>
+                        <h2 class="ap-section-title">Product Identity</h2>
+                    </div>
+
+                    <div class="ap-field-group">
+                        <div class="ap-field ap-field-animate" style="--field-delay: 0.1s">
+                            <label class="ap-label" for="productName">
+                                <span class="ap-label-text">Product Name</span>
+                                <span class="ap-label-required">*</span>
+                            </label>
+                            <div class="ap-input-wrapper">
+                                <input type="text" name="name" id="productName" required placeholder="e.g. Romantic Rose Bouquet" class="ap-input" autocomplete="off">
+                                <div class="ap-input-glow"></div>
+                            </div>
+                        </div>
+
+                        <div class="ap-field ap-field-animate" style="--field-delay: 0.2s">
+                            <label class="ap-label" for="productPrice">
+                                <span class="ap-label-text">Price</span>
+                                <span class="ap-label-required">*</span>
+                            </label>
+                            <div class="ap-input-wrapper ap-input-prefix">
+                                <span class="ap-prefix">RM</span>
+                                <input type="number" step="0.01" name="price" id="productPrice" required placeholder="0.00" class="ap-input ap-input-with-prefix" autocomplete="off">
+                                <div class="ap-input-glow"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ap-field ap-field-animate" style="--field-delay: 0.3s">
+                        <label class="ap-label" for="productDescription">
+                            <span class="ap-label-text">Description</span>
+                            <span class="ap-label-required">*</span>
+                        </label>
+                        <div class="ap-input-wrapper">
+                            <textarea name="description" id="productDescription" required rows="4" placeholder="Describe the beauty and uniqueness of this arrangement..." class="ap-input ap-textarea"></textarea>
+                            <div class="ap-input-glow"></div>
+                        </div>
+                        <span class="ap-char-count" id="charCount">0 / 500</span>
+                    </div>
+                </section>
+
+                <!-- Classification Section -->
+                <section class="ap-section ap-stagger-2">
+                    <div class="ap-section-header">
+                        <div class="ap-section-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                        </div>
+                        <h2 class="ap-section-title">Classification</h2>
+                    </div>
+
+                    <div class="ap-field-row">
+                        <div class="ap-field ap-field-animate" style="--field-delay: 0.4s">
+                            <label class="ap-label" for="productCategory">
+                                <span class="ap-label-text">Category</span>
+                            </label>
+                            <div class="ap-select-wrapper">
+                                <select name="category" id="productCategory" class="ap-select">
+                                    <option value="Bouquets">💐 Bouquets</option>
+                                    <option value="Boxed Flowers">🎁 Boxed Flowers</option>
+                                    <option value="Baskets">🧺 Baskets</option>
+                                    <option value="Vases">🏺 Vases</option>
+                                </select>
+                                <svg class="ap-select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            </div>
+                        </div>
+
+                        <div class="ap-field ap-field-animate" style="--field-delay: 0.5s">
+                            <label class="ap-label" for="productBudget">
+                                <span class="ap-label-text">Budget Tier</span>
+                            </label>
+                            <div class="ap-select-wrapper">
+                                <select name="budget" id="productBudget" class="ap-select">
+                                    <option value="Low">🌱 Low</option>
+                                    <option value="Medium">🌿 Medium</option>
+                                    <option value="High">🌳 High</option>
+                                    <option value="Premium">👑 Premium</option>
+                                </select>
+                                <svg class="ap-select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            </div>
+                        </div>
+
+                        <div class="ap-field ap-field-animate" style="--field-delay: 0.6s">
+                            <label class="ap-label" for="productUse">
+                                <span class="ap-label-text">Primary Use</span>
+                                <span class="ap-label-required">*</span>
+                            </label>
+                            <div class="ap-input-wrapper">
+                                <input type="text" name="use" id="productUse" required placeholder="e.g. Birthday, Wedding" class="ap-input" autocomplete="off">
+                                <div class="ap-input-glow"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Use Tags -->
+                    <div class="ap-tags ap-field-animate" style="--field-delay: 0.7s">
+                        <span class="ap-tags-label">Quick Tags:</span>
+                        <button type="button" class="ap-tag" data-use="Birthday">🎂 Birthday</button>
+                        <button type="button" class="ap-tag" data-use="Wedding">💒 Wedding</button>
+                        <button type="button" class="ap-tag" data-use="Anniversary">💕 Anniversary</button>
+                        <button type="button" class="ap-tag" data-use="Sympathy">🕊️ Sympathy</button>
+                        <button type="button" class="ap-tag" data-use="Graduation">🎓 Graduation</button>
+                        <button type="button" class="ap-tag" data-use="Thank You">🙏 Thank You</button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: Image Upload -->
+            <div class="ap-form-right">
+                <section class="ap-section ap-stagger-3">
+                    <div class="ap-section-header">
+                        <div class="ap-section-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        </div>
+                        <h2 class="ap-section-title">Product Image</h2>
+                    </div>
+
+                    <!-- Drag & Drop Zone -->
+                    <div class="ap-upload-zone ap-field-animate" style="--field-delay: 0.3s" id="uploadZone">
+                        <input type="file" name="image" id="productImage" accept="image/*" class="ap-file-input" title="Choose product image" aria-label="Product image upload">
+                        
+                        <!-- Default state -->
+                        <div class="ap-upload-content" id="uploadContent">
+                            <div class="ap-upload-icon-wrap">
+                                <div class="ap-upload-ring"></div>
+                                <svg class="ap-upload-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                            </div>
+                            <h3 class="ap-upload-title">Drop your image here</h3>
+                            <p class="ap-upload-subtitle">or click to browse files</p>
+                            <span class="ap-upload-hint">PNG, JPG, WEBP up to 10MB</span>
+                        </div>
+
+                        <!-- Preview state -->
+                        <div class="ap-upload-preview" id="uploadPreview" style="display: none;">
+                            <img id="previewImage" src="" alt="Preview">
+                            <button type="button" class="ap-preview-remove" id="removeImage" title="Remove image">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                            <div class="ap-preview-info" id="previewInfo"></div>
+                        </div>
+                    </div>
+
+                    <!-- Helpful Tips -->
+                    <div class="ap-tips ap-field-animate" style="--field-delay: 0.5s">
+                        <div class="ap-tip">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                            <span>Use high-quality photos with good lighting</span>
+                        </div>
+                        <div class="ap-tip">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                            <span>Square or portrait orientation works best</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Submit Section -->
+        <div class="ap-submit-section ap-stagger-4">
+            <div class="ap-submit-divider">
+                <div class="ap-submit-divider-line"></div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0.5">
+                    <circle cx="12" cy="12" r="3.5"/>
+                    <ellipse cx="12" cy="5.5" rx="3" ry="4.5" transform="rotate(0 12 12)"/>
+                    <ellipse cx="12" cy="5.5" rx="3" ry="4.5" transform="rotate(72 12 12)"/>
+                    <ellipse cx="12" cy="5.5" rx="3" ry="4.5" transform="rotate(144 12 12)"/>
+                    <ellipse cx="12" cy="5.5" rx="3" ry="4.5" transform="rotate(216 12 12)"/>
+                    <ellipse cx="12" cy="5.5" rx="3" ry="4.5" transform="rotate(288 12 12)"/>
+                </svg>
+                <div class="ap-submit-divider-line"></div>
+            </div>
+
+            <div class="ap-submit-actions">
+                <a href="{{ url_for('admin_products') }}" class="ap-cancel-btn">
+                    Cancel
+                </a>
+                <button type="submit" class="ap-submit-btn" id="submitBtn">
+                    <span class="ap-submit-btn-content">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="9" x2="12" y2="15"/><line x1="9" y1="12" x2="15" y2="12"/></svg>
+                        Add Product
+                    </span>
+                    <span class="ap-submit-btn-shine"></span>
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Success overlay (hidden by default) -->
+    <div class="ap-success-overlay" id="successOverlay" style="display: none;">
+        <div class="ap-success-content">
+            <div class="ap-success-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+            </div>
+            <h2>Product Added Successfully!</h2>
+            <p>Your new product has been added to the collection.</p>
+        </div>
+    </div>
+</main>
+
+<script>
+(function() {
+    // ============================================
+    // Animated Particles Background
+    // ============================================
+    const particlesContainer = document.getElementById('apParticles');
+    const particleCount = 20;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'ap-particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.width = (Math.random() * 8 + 3) + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.animationDelay = (Math.random() * 8) + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 12) + 's';
+        particle.style.opacity = Math.random() * 0.3 + 0.1;
+        particlesContainer.appendChild(particle);
+    }
+
+    // ============================================
+    // Intersection Observer for staggered reveals
+    // ============================================
+    const observeTargets = document.querySelectorAll('.ap-field-animate');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('ap-field-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    observeTargets.forEach(el => observer.observe(el));
+
+    // ============================================
+    // Character Counter
+    // ============================================
+    const descField = document.getElementById('productDescription');
+    const charCount = document.getElementById('charCount');
+    if (descField && charCount) {
+        descField.addEventListener('input', () => {
+            const len = descField.value.length;
+            charCount.textContent = len + ' / 500';
+            charCount.classList.toggle('ap-char-warn', len > 450);
+            charCount.classList.toggle('ap-char-over', len > 500);
+        });
+    }
+
+    // ============================================
+    // Quick Use Tags
+    // ============================================
+    const tags = document.querySelectorAll('.ap-tag');
+    const useField = document.getElementById('productUse');
+    tags.forEach(tag => {
+        tag.addEventListener('click', () => {
+            const useVal = tag.getAttribute('data-use');
+            const current = useField.value.trim();
+            if (current && !current.includes(useVal)) {
+                useField.value = current + ', ' + useVal;
+            } else if (!current) {
+                useField.value = useVal;
+            }
+            tag.classList.add('ap-tag-active');
+            // Ripple effect
+            tag.style.transform = 'scale(0.92)';
+            setTimeout(() => { tag.style.transform = ''; }, 150);
+        });
+    });
+
+    // ============================================
+    // Image Upload - Drag & Drop + Preview
+    // ============================================
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('productImage');
+    const uploadContent = document.getElementById('uploadContent');
+    const uploadPreview = document.getElementById('uploadPreview');
+    const previewImage = document.getElementById('previewImage');
+    const previewInfo = document.getElementById('previewInfo');
+    const removeBtn = document.getElementById('removeImage');
+
+    // Click to upload
+    uploadZone.addEventListener('click', (e) => {
+        if (e.target !== removeBtn && !removeBtn.contains(e.target)) {
+            fileInput.click();
+        }
+    });
+
+    // Drag events
+    ['dragenter', 'dragover'].forEach(event => {
+        uploadZone.addEventListener(event, (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('ap-upload-dragging');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(event => {
+        uploadZone.addEventListener(event, (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('ap-upload-dragging');
+        });
+    });
+
+    uploadZone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            showPreview(files[0]);
+        }
+    });
+
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
+            showPreview(fileInput.files[0]);
+        }
+    });
+
+    function showPreview(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            previewImage.src = e.target.result;
+            uploadContent.style.display = 'none';
+            uploadPreview.style.display = 'flex';
+            uploadZone.classList.add('ap-upload-has-file');
+            
+            const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+            previewInfo.textContent = file.name + ' (' + sizeMB + ' MB)';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    removeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fileInput.value = '';
+        previewImage.src = '';
+        uploadContent.style.display = '';
+        uploadPreview.style.display = 'none';
+        uploadZone.classList.remove('ap-upload-has-file');
+    });
+
+    // ============================================
+    // Input Focus Effects
+    // ============================================
+    document.querySelectorAll('.ap-input, .ap-select').forEach(input => {
+        input.addEventListener('focus', () => {
+            input.closest('.ap-input-wrapper, .ap-select-wrapper')?.classList.add('ap-focused');
+        });
+        input.addEventListener('blur', () => {
+            input.closest('.ap-input-wrapper, .ap-select-wrapper')?.classList.remove('ap-focused');
+        });
+    });
+
+    // ============================================
+    // Submit button hover ripple
+    // ============================================
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.addEventListener('mousemove', (e) => {
+        const rect = submitBtn.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        submitBtn.style.setProperty('--shine-x', x + 'px');
+        submitBtn.style.setProperty('--shine-y', y + 'px');
+    });
+
+})();
+</script>
+
+{% endblock %}
