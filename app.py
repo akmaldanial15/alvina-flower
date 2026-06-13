@@ -75,6 +75,19 @@ def ensure_tables():
     if not db.execute('SELECT COUNT(*) as c FROM store_settings').fetchone()['c']:
         db.execute("INSERT INTO store_settings (id, is_open, theme) VALUES (1, 1, 'classic')")
         db.commit()
+
+    db.execute('''CREATE TABLE IF NOT EXISTS security_settings (
+        id INTEGER PRIMARY KEY CHECK (id = 1),
+        honeypot_enabled BOOLEAN DEFAULT 1,
+        fast_submit_limit_ms INTEGER DEFAULT 3000,
+        spam_order_limit INTEGER DEFAULT 3,
+        spam_time_window_mins INTEGER DEFAULT 10
+    )''')
+    db.commit()
+
+    if not db.execute('SELECT COUNT(*) as c FROM security_settings').fetchone()['c']:
+        db.execute("INSERT INTO security_settings (id, honeypot_enabled, fast_submit_limit_ms, spam_order_limit, spam_time_window_mins) VALUES (1, 1, 3000, 3, 10)")
+        db.commit()
     
     # ── Migrate store_settings with visitor counter columns ──
     store_cols = {col[1] for col in db.execute('PRAGMA table_info(store_settings)').fetchall()}
