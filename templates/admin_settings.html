@@ -532,6 +532,34 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Danger Zone -->
+            <div class="sec-card" style="border: 2px solid rgba(220,53,69,0.3); background: rgba(220,53,69,0.02); margin-top: 2rem;">
+                <div class="sec-card-header" style="justify-content: space-between;">
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <div class="sec-card-icon" style="background: rgba(220,53,69,0.1); color: #dc3545;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="sec-card-title" style="color: #dc3545;">Danger Zone</h3>
+                            <p class="sec-card-desc">Irreversible database management operations. Handle with extreme care.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sec-row" style="margin-top: 1rem; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 250px;">
+                        <strong style="display: block; font-size: 0.95rem; color: var(--text-main);">Clear All Orders Database</strong>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">Permanently delete all customer orders and transaction history from this system.</span>
+                    </div>
+                    <div>
+                        <button type="button" onclick="confirmClearAllOrders()" class="sec-save-btn" style="background: linear-gradient(135deg, #dc3545, #c82333); box-shadow: 0 4px 12px rgba(220,53,69,0.2); white-space: nowrap; display: inline-flex; align-items: center; gap: 8px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            Wipe All Orders
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- ============================= -->
@@ -1371,6 +1399,41 @@
                 closedPanel.style.display = 'flex';
             }
         }
+    }
+
+    function confirmClearAllOrders() {
+        const confirm1 = confirm("⚠️ WARNING: This will permanently delete ALL orders from the database! Are you sure you want to proceed?");
+        if (!confirm1) return;
+        
+        const confirm2 = confirm("🚨 FINAL WARNING: This action is completely IRREVERSIBLE and cannot be undone. All transaction history will be wiped out. Are you absolutely sure?");
+        if (!confirm2) return;
+        
+        const confirm3 = confirm("🛑 DOUBLE CHECK: This is your 3rd warning. Have you backed up your database? Do you still want to delete every order?");
+        if (!confirm3) return;
+        
+        const confirm4 = confirm("💥 LAST CHANCE: Sila sahkan buat kali terakhir. Klik OK untuk padam semua order SEKARANG.");
+        if (!confirm4) return;
+        
+        // Send request
+        fetch("/api/admin/clear-all-orders", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("✅ All orders have been successfully cleared from the database!");
+                window.location.reload();
+            } else {
+                alert("❌ Failed to clear orders: " + (data.error || "Unknown error"));
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("❌ An error occurred while communicating with the server.");
+        });
     }
 
     // Load recipients on page load + log on details open

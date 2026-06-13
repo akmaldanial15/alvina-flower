@@ -2826,6 +2826,20 @@ def api_notif_log():
     rows = db.execute('SELECT * FROM notif_log ORDER BY id DESC LIMIT 50').fetchall()
     return jsonify({'success': True, 'logs': [dict(r) for r in rows]})
 
+@app.route('/api/admin/clear-all-orders', methods=['POST'])
+def api_clear_all_orders():
+    if not session.get('admin_logged_in'):
+        return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+    try:
+        db = get_db()
+        db.execute('DELETE FROM orders')
+        db.execute("INSERT INTO activity_log (action, details, icon) VALUES (?, ?, ?)", 
+                   ("Clear Orders", "All orders and transaction history permanently deleted from the database by admin", "trash"))
+        db.commit()
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 6006))
     app.run(debug=True, host='0.0.0.0', port=port)
