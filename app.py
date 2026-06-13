@@ -724,9 +724,41 @@ def get_promo_status(promo):
         return 'active'
     return 'inactive'
 
+@app.route('/deploy-webhook', methods=['POST'])
+def deploy_webhook():
+    token = request.args.get('token')
+    if token != 'alvina_deploy_secret_2026':
+        return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+    
+    try:
+        import subprocess
+        result = subprocess.run(['git', 'pull', 'origin', 'main'], cwd=BASE_DIR, capture_output=True, text=True, check=True)
+        
+        # Touch passenger_wsgi.py to reload Phusion Passenger
+        wsgi_path = os.path.join(BASE_DIR, 'passenger_wsgi.py')
+        if os.path.exists(wsgi_path):
+            os.utime(wsgi_path, None)
+            
+        return jsonify({
+            'success': True,
+            'message': 'Deployment successful! Code pulled and server restarted.',
+            'git_output': result.stdout
+        }), 200
+    except subprocess.CalledProcessError as e:
+        return jsonify({
+            'success': False,
+            'error': f'Git pull failed: {e.stderr}'
+        }), 500
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 # ══════════════════════════════════════════
 # CUSTOMER ROUTES
 # ══════════════════════════════════════════
+
 
 @app.route('/')
 def home():
