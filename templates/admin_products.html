@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_products.css') }}">
 <main class="animate-fade-in" style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
     <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
         <h1 class="elegant-title" style="font-size: 2.5rem; color: #2a1622;">Manage Products</h1>
@@ -159,72 +160,7 @@
         </button>
     </div>
 
-<style>
-    .page-btn {
-        background: transparent; border: 1px solid rgba(248,200,216,0.5); padding: 6px 14px; border-radius: 8px; font-size: 0.9rem; color: #3d2b35; font-weight: 500; cursor: pointer; transition: all 0.2s;
-    }
-    .page-btn:hover:not(:disabled) {
-        background: var(--primary); color: white; border-color: var(--primary);
-    }
-    .page-btn:disabled {
-        opacity: 0.5; cursor: not-allowed;
-    }
-    .page-btn.active {
-        background: var(--primary); color: white; border-color: var(--primary); font-weight: bold;
-    }
-    .product-row:hover {
-        background: rgba(255,255,255,0.9) !important;
-        box-shadow: 0 4px 15px rgba(248,200,216,0.15);
-        transform: translateY(-1px);
-    }
-    .product-row a:hover { border-color: var(--primary) !important; color: var(--primary) !important; }
-    .product-row button:hover { border-color: #e57373 !important; background: #e57373 !important; color: white !important; }
-    
-    /* Sorting indicators */
-    th.sortable span { font-size: 0.7em; opacity: 0.4; margin-left: 4px; }
-    th.sort-asc span { opacity: 1; color: var(--primary); }
-    th.sort-desc span { opacity: 1; color: var(--primary); display: inline-block; transform: rotate(180deg); }
-    
-    #bulk-delete-btn:hover { background: rgba(229,115,115,0.3) !important; color: white !important; }
 
-    /* Custom Dropdown Styles */
-    .dropdown-options {
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(-10px) scale(0.95);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .dropdown-option {
-        margin-bottom: 2px;
-    }
-    .dropdown-option:last-child {
-        margin-bottom: 0;
-    }
-    .dropdown-option:hover {
-        background: rgba(248,200,216,0.15);
-        color: var(--primary);
-    }
-    .dropdown-option.active {
-        background: rgba(248,200,216,0.25);
-        color: var(--primary);
-        font-weight: 600;
-    }
-    .dropdown-option.active .check-icon {
-        opacity: 1 !important;
-    }
-    .custom-dropdown.open .dropdown-options {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0) scale(1);
-    }
-    .custom-dropdown.open .dropdown-selected svg {
-        transform: rotate(180deg);
-    }
-    .custom-dropdown.open .dropdown-selected {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(248,200,216,0.2);
-    }
-</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {

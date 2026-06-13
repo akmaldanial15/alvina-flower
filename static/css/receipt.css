@@ -1,0 +1,382 @@
+        :root {
+            --primary: #b5446e;
+            --text-main: #2a1622;
+            --text-muted: #665b60;
+            --border: #f2e1e8;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            background: #fff;
+            margin: 0;
+            padding: 40px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .receipt-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        /* Header */
+        .rcpt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 30px;
+            margin-bottom: 30px;
+        }
+        .rcpt-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .rcpt-info {
+            text-align: right;
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .rcpt-title {
+            font-size: 24px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            margin-bottom: 5px;
+        }
+        /* Meta Info */
+        .rcpt-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+        .meta-box {
+            background: #fdfafb;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            width: 48%;
+        }
+        .meta-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .meta-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .rcpt-id {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(240,160,48,0.2);
+            color: #5a4010;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        /* Table */
+        .rcpt-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+        }
+        .rcpt-table th {
+            background: #fdfafb;
+            padding: 15px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border);
+        }
+        .rcpt-table td {
+            padding: 20px 15px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+        .item-details {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .item-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid var(--border);
+        }
+        .item-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        /* Totals */
+        .rcpt-totals {
+            width: 350px;
+            margin-left: auto;
+            background: #fdfafb;
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid var(--border);
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 15px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .total-row.discount {
+            color: #2E7D32;
+            font-weight: 600;
+        }
+        .total-row.final {
+            border-top: 2px solid var(--border);
+            margin-top: 15px;
+            padding-top: 20px;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 0;
+        }
+        /* Footer */
+        .rcpt-footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+            padding-top: 30px;
+            border-top: 1px dashed var(--border);
+        }
+        
+        /* Print Styles */
+        @media print {
+            body { 
+                padding: 0; 
+                background: #fff !important; 
+                color: #000 !important;
+            }
+            .no-print,
+            .lv-bg-engine,
+            #announcementWrapper,
+            #announcementMinimized,
+            #announcementBackdrop,
+            body > a[href*="wa.me"] { 
+                display: none !important; 
+            }
+            
+            /* Force standard table layouts for paper / PDF saves */
+            .rcpt-table { display: table !important; width: 100% !important; border-collapse: collapse !important; }
+            .rcpt-table thead { display: table-header-group !important; }
+            .rcpt-table tbody { display: table-row-group !important; }
+            .rcpt-table tr { display: table-row !important; border: none !important; background: transparent !important; margin-bottom: 0 !important; padding: 0 !important; }
+            .rcpt-table td, .rcpt-table th { display: table-cell !important; border-bottom: 1px solid var(--border) !important; padding: 12px 8px !important; }
+            
+            .meta-box, .rcpt-table th, .rcpt-totals { background: #fdfafb !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .rcpt-id { background: rgba(240,160,48,0.2) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+        
+        /* Interactive Buttons (Hidden on Print) */
+        .print-actions {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #b5446e, #d4728e);
+            color: #fff;
+            border: none;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(181,68,110,0.3);
+        }
+        .btn-outline {
+            background: #fff;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+        .btn-outline:hover {
+            background: #fdfafb;
+            transform: translateY(-2px);
+        }
+
+/* ===== MOBILE & TABLET RESPONSIVE OVERRIDES FOR RECEIPT ===== */
+@media (max-width: 600px) {
+    body {
+        padding: 15px;
+    }
+    .rcpt-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+    .rcpt-info {
+        text-align: left;
+        font-size: 13px;
+        width: 100%;
+    }
+    .rcpt-title {
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+    .rcpt-meta {
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+    .meta-box {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 15px;
+    }
+    .meta-value {
+        font-size: 14px;
+    }
+    /* Convert table to cards on mobile screen */
+    .rcpt-table, 
+    .rcpt-table thead, 
+    .rcpt-table tbody, 
+    .rcpt-table tr, 
+    .rcpt-table th, 
+    .rcpt-table td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .rcpt-table thead {
+        display: none;
+    }
+    .rcpt-table tr {
+        background: #fdfafb;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: var(--shadow-sm);
+    }
+    .rcpt-table td {
+        padding: 8px 0;
+        border-bottom: 1px dashed var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left !important;
+    }
+    .rcpt-table td:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    .rcpt-table td:first-child {
+        border-bottom: 1px solid var(--border);
+        padding-top: 0;
+        padding-bottom: 12px;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 12px;
+    }
+    .item-details {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+    }
+    .item-img {
+        width: 45px;
+        height: 45px;
+        border-radius: 8px;
+        flex-shrink: 0;
+        background-size: cover;
+        background-position: center;
+        border: 1px solid var(--border);
+    }
+    .item-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+    .rcpt-table td:nth-child(2)::before {
+        content: "Quantity";
+        font-size: 12px;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+    .rcpt-table td:nth-child(3)::before {
+        content: "Unit Price";
+        font-size: 12px;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+    .rcpt-table td:nth-child(4)::before {
+        content: "Total Amount";
+        font-size: 12px;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+    .rcpt-table td:nth-child(4) {
+        color: var(--primary);
+        font-weight: 700;
+    }
+    .rcpt-totals {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 20px;
+    }
+    .total-row.final {
+        font-size: 18px;
+        padding-top: 15px;
+    }
+    .rcpt-footer {
+        margin-top: 40px;
+        font-size: 12px;
+        padding-top: 20px;
+    }
+    .print-actions {
+        position: fixed;
+        bottom: 15px;
+        left: 15px;
+        right: 15px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+    .btn {
+        flex: 1;
+        justify-content: center;
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+}

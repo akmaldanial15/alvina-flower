@@ -3,6 +3,82 @@
 {% block content %}
 <div class="add-product-page" style="max-width: 900px;">
 
+    <style>
+        /* Responsive Overrides (Mobile & Tablet) */
+        @media (max-width: 768px) {
+            .admin-nav-tabs {
+                flex-wrap: wrap !important;
+                gap: 8px !important;
+            }
+            .admin-nav-tabs .btn {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+                justify-content: center;
+                display: flex;
+            }
+            .stat-row-grid {
+                grid-template-columns: 1fr 1fr !important;
+                gap: 12px !important;
+            }
+            .stat-row-grid > .form-group:nth-child(3) {
+                width: 100% !important;
+            }
+            .stat-row-grid > .form-group:nth-child(3) input {
+                width: 100% !important;
+            }
+            .stat-row-grid > form {
+                width: 100% !important;
+                display: flex !important;
+                justify-content: flex-end !important;
+            }
+            .stat-row-grid > form button {
+                width: 100% !important;
+                display: flex !important;
+                justify-content: center !important;
+                align-items: center !important;
+            }
+            .badge-row-grid {
+                grid-template-columns: 80px 1fr !important;
+                gap: 12px !important;
+            }
+            .badge-row-grid > .form-group:nth-child(3) {
+                width: 80px !important;
+            }
+            .badge-row-grid > .form-group:nth-child(3) input {
+                width: 100% !important;
+            }
+            .badge-row-grid > form {
+                width: 100% !important;
+                display: flex !important;
+                justify-content: flex-end !important;
+            }
+            .badge-row-grid > form button {
+                width: 100% !important;
+                display: flex !important;
+                justify-content: center !important;
+                align-items: center !important;
+            }
+        }
+        @media (max-width: 576px) {
+            .add-stat-form {
+                flex-direction: column !important;
+                align-items: stretch !important;
+            }
+            .add-stat-form > .form-group {
+                width: 100% !important;
+            }
+            .add-stat-btn,
+            .add-badge-btn {
+                width: 100% !important;
+                margin-top: 8px !important;
+                display: flex !important;
+                justify-content: center !important;
+                align-items: center !important;
+            }
+        }
+    </style>
+
     <!-- Breadcrumb -->
     <div class="ap-breadcrumb animate-slide-down">
         <a href="{{ url_for('admin_dashboard') }}" class="ap-breadcrumb-link">
@@ -37,7 +113,7 @@
     </div>
 
     <!-- Tab Navigation -->
-    <div style="display: flex; gap: 8px; margin-bottom: 2rem;">
+    <div class="admin-nav-tabs" style="display: flex; gap: 8px; margin-bottom: 2rem;">
         <a href="{{ url_for('admin_homepage_stats') }}" class="btn {% if section == 'stats' %}btn-primary{% else %}btn-outline{% endif %}" style="text-decoration: none;">
             📊 Hero Stats
         </a>
@@ -64,7 +140,7 @@
 
             {% for stat in stats %}
             <input type="hidden" name="stat_id" value="{{ stat.id }}">
-            <div style="display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 12px; align-items: end; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+            <div class="stat-row-grid" style="display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 12px; align-items: end; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
                 <div class="form-group" style="margin-bottom: 0;">
                     <label class="form-label">Label</label>
                     <input type="text" name="label_{{ stat.id }}" value="{{ stat.label }}" class="input-field" required>
@@ -95,7 +171,7 @@
     <!-- Add New Stat -->
     <div class="glass-panel" style="padding: 2rem;">
         <h3 class="elegant-title" style="font-size: 1.2rem; margin-bottom: 1rem;">➕ Add New Stat</h3>
-        <form method="POST" action="{{ url_for('admin_add_stat') }}" style="display: flex; gap: 12px; align-items: end; flex-wrap: wrap;">
+        <form class="add-stat-form" method="POST" action="{{ url_for('admin_add_stat') }}" style="display: flex; gap: 12px; align-items: end; flex-wrap: wrap;">
             <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 150px;">
                 <label class="form-label">Label</label>
                 <input type="text" name="label" class="input-field" placeholder="e.g. Orders Completed" required>
@@ -104,7 +180,7 @@
                 <label class="form-label">Value</label>
                 <input type="text" name="value" class="input-field" placeholder="e.g. 1000+" required>
             </div>
-            <button type="submit" class="btn btn-primary">Add</button>
+            <button type="submit" class="btn btn-primary add-stat-btn">Add</button>
         </form>
     </div>
     {% endif %}
@@ -125,7 +201,7 @@
             {% for badge in badges %}
             <input type="hidden" name="badge_id" value="{{ badge.id }}">
             <div style="background: rgba(248,200,216,0.05); padding: 1.2rem; border-radius: 16px; margin-bottom: 1rem; border: 1px solid var(--border);">
-                <div style="display: grid; grid-template-columns: 80px 1fr auto auto; gap: 12px; align-items: end;">
+                <div class="badge-row-grid" style="display: grid; grid-template-columns: 80px 1fr auto auto; gap: 12px; align-items: end;">
                     <div class="form-group" style="margin-bottom: 0;">
                         <label class="form-label">Emoji</label>
                         <input type="text" name="icon_{{ badge.id }}" value="{{ badge.icon }}" class="input-field" style="text-align: center; font-size: 1.3rem;" required>
@@ -176,7 +252,7 @@
                 <label class="form-label">Description</label>
                 <input type="text" name="description" class="input-field" placeholder="A short description of this trust badge" required>
             </div>
-            <button type="submit" class="btn btn-primary">Add Badge</button>
+            <button type="submit" class="btn btn-primary add-badge-btn">Add Badge</button>
         </form>
     </div>
     {% endif %}

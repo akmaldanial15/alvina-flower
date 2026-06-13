@@ -12,7 +12,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/globals.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navigation.css') }}">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
     
     {% if store_settings and store_settings.theme %}
         {% if store_settings.theme == 'raya' %}
@@ -796,6 +800,7 @@
     <!-- Floating WhatsApp (Customer Pages Only) -->
     {% if not request.path.startswith('/admin') and not request.path.startswith('/secret-alvina-admin') %}
     <a href="https://wa.me/60164839879" target="_blank" rel="noopener noreferrer" 
+       class="no-print"
        title="Chat with us on WhatsApp"
        style="position: fixed; bottom: 30px; right: 30px; background: #25D366; color: white; padding: 15px; 
               border-radius: 50%; box-shadow: var(--shadow-lg); display: flex; align-items: center; 

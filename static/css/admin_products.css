@@ -1,0 +1,335 @@
+.page-btn {
+        background: transparent; border: 1px solid rgba(248,200,216,0.5); padding: 6px 14px; border-radius: 8px; font-size: 0.9rem; color: #3d2b35; font-weight: 500; cursor: pointer; transition: all 0.2s;
+    }
+    .page-btn:hover:not(:disabled) {
+        background: var(--primary); color: white; border-color: var(--primary);
+    }
+    .page-btn:disabled {
+        opacity: 0.5; cursor: not-allowed;
+    }
+    .page-btn.active {
+        background: var(--primary); color: white; border-color: var(--primary); font-weight: bold;
+    }
+    .product-row:hover {
+        background: rgba(255,255,255,0.9) !important;
+        box-shadow: 0 4px 15px rgba(248,200,216,0.15);
+        transform: translateY(-1px);
+    }
+    .product-row a:hover { border-color: var(--primary) !important; color: var(--primary) !important; }
+    .product-row button:hover { border-color: #e57373 !important; background: #e57373 !important; color: white !important; }
+    
+    /* Sorting indicators */
+    th.sortable span { font-size: 0.7em; opacity: 0.4; margin-left: 4px; }
+    th.sort-asc span { opacity: 1; color: var(--primary); }
+    th.sort-desc span { opacity: 1; color: var(--primary); display: inline-block; transform: rotate(180deg); }
+    
+    #bulk-delete-btn:hover { background: rgba(229,115,115,0.3) !important; color: white !important; }
+
+    /* Custom Dropdown Styles */
+    .dropdown-options {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px) scale(0.95);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .dropdown-option {
+        margin-bottom: 2px;
+    }
+    .dropdown-option:last-child {
+        margin-bottom: 0;
+    }
+    .dropdown-option:hover {
+        background: rgba(248,200,216,0.15);
+        color: var(--primary);
+    }
+    .dropdown-option.active {
+        background: rgba(248,200,216,0.25);
+        color: var(--primary);
+        font-weight: 600;
+    }
+    .dropdown-option.active .check-icon {
+        opacity: 1 !important;
+    }
+    .custom-dropdown.open .dropdown-options {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+    }
+    .custom-dropdown.open .dropdown-selected svg {
+        transform: rotate(180deg);
+    }
+    .custom-dropdown.open .dropdown-selected {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(248,200,216,0.2);
+    }
+
+/* ===== RESPONSIVE MOBILE & TABLET OVERRIDES FOR PRODUCTS ===== */
+@media (max-width: 768px) {
+    /* Header Stack */
+    main.animate-fade-in > header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+        margin-bottom: 1.5rem !important;
+        padding-bottom: 1rem !important;
+    }
+    main.animate-fade-in > header > div {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        width: 100% !important;
+        gap: 8px !important;
+    }
+    main.animate-fade-in > header a {
+        width: 100% !important;
+        justify-content: center !important;
+        box-sizing: border-box;
+    }
+    
+    /* Control Bar Stack */
+    main.animate-fade-in > div:nth-of-type(1) {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+        margin-bottom: 1rem !important;
+    }
+    main.animate-fade-in > div:nth-of-type(1) > div:nth-of-type(2) {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        width: 100% !important;
+        max-width: none !important;
+        gap: 10px !important;
+    }
+    #custom-cat-dropdown {
+        width: 100% !important;
+    }
+    .dropdown-options {
+        width: 100% !important;
+    }
+
+    /* Table to Cards Conversion */
+    .glass-panel {
+        padding: 1rem !important;
+    }
+    
+    #products-table {
+        display: block;
+        width: 100%;
+    }
+    
+    /* Select All Control Bar */
+    #products-table thead {
+        display: block !important;
+        border: none !important;
+        width: 100%;
+    }
+    #products-table thead tr {
+        display: flex !important;
+        align-items: center;
+        padding: 0.8rem 1rem;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        margin-bottom: 12px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    #products-table thead th {
+        padding: 0 !important;
+        border: none !important;
+    }
+    #products-table thead th:not(:first-child) {
+        display: none !important;
+    }
+    #products-table thead th:first-child {
+        display: flex !important;
+        align-items: center;
+        gap: 8px;
+        width: 100% !important;
+    }
+    #products-table thead th:first-child::after {
+        content: "Select All Products";
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-main);
+        text-transform: none;
+        letter-spacing: normal;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* tbody and tr cards */
+    #products-table tbody {
+        display: block;
+        width: 100%;
+    }
+    #products-table tbody tr.product-row {
+        display: grid !important;
+        grid-template-columns: 40px 64px 1fr !important;
+        grid-template-rows: auto auto !important;
+        background: #fff !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 16px !important;
+        padding: 1rem !important;
+        margin-bottom: 12px !important;
+        box-shadow: var(--shadow-sm) !important;
+        align-items: center !important;
+        gap: 8px 12px !important;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    #products-table tbody tr.product-row:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: var(--shadow-md) !important;
+    }
+    
+    /* Checkbox td */
+    #products-table tbody tr.product-row td:nth-child(1) {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+        padding: 0 !important;
+        border-radius: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Image td */
+    #products-table tbody tr.product-row td:nth-child(3) {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        padding: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    #products-table tbody tr.product-row td:nth-child(3) img {
+        width: 56px !important;
+        height: 56px !important;
+        border-radius: 10px;
+    }
+
+    /* ID td (Top-right of card) */
+    #products-table tbody tr.product-row td:nth-child(2) {
+        display: block !important;
+        grid-column: 3;
+        grid-row: 1;
+        justify-self: end;
+        padding: 0 !important;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    /* Name td */
+    #products-table tbody tr.product-row td:nth-child(4) {
+        grid-column: 3;
+        grid-row: 1;
+        padding: 0 !important;
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-right: 60px; /* Space for ID badge */
+        text-align: left;
+    }
+
+    /* Price td */
+    #products-table tbody tr.product-row td:nth-child(5) {
+        grid-column: 3;
+        grid-row: 2;
+        padding: 0 !important;
+        display: flex;
+        align-items: center;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--primary);
+        text-align: left;
+    }
+    
+    /* Category td */
+    #products-table tbody tr.product-row td:nth-child(6) {
+        grid-column: 3;
+        grid-row: 2;
+        justify-self: end;
+        padding: 0 !important;
+    }
+    
+    /* Actions td (Span full card width) */
+    #products-table tbody tr.product-row td:nth-child(7) {
+        grid-column: 1 / span 3;
+        grid-row: 3;
+        padding: 10px 0 0 0 !important;
+        border-top: 1px solid rgba(242,225,232,0.4) !important;
+        display: block !important;
+        width: 100%;
+        border-radius: 0 !important;
+    }
+    #products-table tbody tr.product-row td:nth-child(7) > div {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    #products-table tbody tr.product-row td:nth-child(7) > div > a,
+    #products-table tbody tr.product-row td:nth-child(7) > div > form,
+    #products-table tbody tr.product-row td:nth-child(7) > div > form button {
+        width: 100% !important;
+        height: 38px !important;
+        box-sizing: border-box;
+        margin: 0 !important;
+    }
+    #products-table tbody tr.product-row td:nth-child(7) > div > a,
+    #products-table tbody tr.product-row td:nth-child(7) > div > form button {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px !important;
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+    }
+
+    /* Floating Bulk Actions Bar Mobile optimization */
+    #bulk-action-bar {
+        width: 92% !important;
+        border-radius: 20px !important;
+        padding: 14px 16px !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+        box-sizing: border-box;
+        left: 4% !important;
+        transform: none !important;
+    }
+    /* Dynamic bottom position controlled in JS overridden on mobile */
+    #bulk-action-bar:not([style*="bottom: -100px"]) {
+        bottom: 16px !important;
+    }
+    #bulk-action-bar > div:first-child {
+        border-right: none !important;
+        padding-right: 0 !important;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding-bottom: 8px;
+        text-align: center;
+    }
+    #bulk-action-bar > div:nth-child(2) {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    #bulk-action-bar select, 
+    #bulk-action-bar button {
+        width: 100% !important;
+    }
+    #close-bulk {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+    }
+    
+    /* Pagination Responsive overrides */
+    #pagination-wrapper {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 12px !important;
+    }
+    #page-info {
+        text-align: center;
+    }
+}

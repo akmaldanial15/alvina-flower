@@ -176,6 +176,46 @@
     }
     .sec-save-btn svg { transition: transform 0.3s ease; }
     .sec-save-btn:hover svg { transform: translateX(3px); }
+
+    /* Responsive Overrides (Mobile & Tablet) */
+    @media (max-width: 768px) {
+        .sec-dash-wrapper {
+            padding: 1rem !important;
+        }
+        .sec-header {
+            padding: 2rem 1.5rem !important;
+            margin-bottom: 1.5rem !important;
+        }
+        .sec-title {
+            font-size: 1.75rem !important;
+        }
+        .sec-card {
+            padding: 1.5rem !important;
+            margin-bottom: 1.5rem !important;
+        }
+        .sec-card-header {
+            margin-bottom: 1.25rem !important;
+        }
+        .sec-card-title {
+            font-size: 1.2rem !important;
+        }
+        .sec-row {
+            gap: 1.25rem !important;
+        }
+    }
+    @media (max-width: 576px) {
+        .sec-footer {
+            justify-content: center !important;
+            padding-top: 1.5rem !important;
+            margin-top: 1.5rem !important;
+        }
+        .sec-save-btn {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 14px 24px !important;
+            font-size: 0.9rem !important;
+        }
+    }
 </style>
 
 <div class="sec-dash-wrapper">

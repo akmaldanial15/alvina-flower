@@ -15,7 +15,7 @@
 
     <!-- Header -->
     <div class="ap-header animate-slide-down">
-        <div class="ap-header-content">
+        <div class="ap-header-content reviews-header-content">
             <div class="ap-header-icon">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             </div>
@@ -23,14 +23,14 @@
                 <h1 class="ap-title">Customer Reviews & Sentiment</h1>
                 <p class="ap-subtitle">Manage reviews, add custom entries, and analyze customer sentiment.</p>
             </div>
-            <button onclick="document.getElementById('addReviewModal').style.display='flex'" class="btn btn-primary" style="margin-left: auto;">
+            <button onclick="document.getElementById('addReviewModal').style.display='flex'" class="btn btn-primary add-review-header-btn">
                 + Add Custom Review
             </button>
         </div>
     </div>
 
     <!-- Tab Navigation -->
-    <div style="display: flex; gap: 8px; margin-bottom: 2rem;">
+    <div class="admin-nav-tabs" style="display: flex; gap: 8px; margin-bottom: 2rem;">
         <a href="{{ url_for('admin_homepage_stats') }}" class="btn btn-outline" style="text-decoration: none;">
             📊 Hero Stats
         </a>
@@ -40,7 +40,7 @@
         <a href="{{ url_for('admin_reviews') }}" class="btn btn-primary" style="text-decoration: none;">
             💬 Reviews
         </a>
-        <div style="margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted);">
+        <div class="sentiment-engine-selector" style="margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted);">
             <span>Sentiment Analysis Engine:</span>
             <div style="background: rgba(255,255,255,0.5); padding: 4px; border-radius: 8px; display: flex; gap: 4px; border: 1px solid var(--border);">
                 <a href="{{ url_for('admin_reviews', sentiment='simple') }}" class="btn {% if stats.type == 'simple' %}btn-primary{% else %}btn-outline{% endif %}" style="padding: 4px 12px; font-size: 0.75rem; border: none;">Simple</a>
@@ -99,6 +99,108 @@
         }
         .star-count {
             font-size: 0.75rem; color: var(--text-muted); width: 25px; text-align: right; font-weight: 600;
+        }
+
+        /* Responsive Overrides (Mobile & Tablet) */
+        @media (max-width: 768px) {
+            .reviews-header-content {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 12px !important;
+                width: 100%;
+            }
+            .reviews-header-content .ap-header-icon {
+                align-self: flex-start;
+            }
+            .add-review-header-btn {
+                margin-left: 0 !important;
+                width: 100% !important;
+                justify-content: center;
+                text-align: center;
+                display: flex;
+                align-items: center;
+            }
+            .admin-nav-tabs {
+                flex-wrap: wrap !important;
+                gap: 8px !important;
+            }
+            .admin-nav-tabs .btn {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+                justify-content: center;
+                display: flex;
+            }
+            .sentiment-engine-selector {
+                margin-left: 0 !important;
+                width: 100% !important;
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 8px !important;
+                margin-top: 8px;
+            }
+            .sentiment-engine-selector > div {
+                display: flex;
+                width: 100%;
+            }
+            .sentiment-engine-selector > div a {
+                flex: 1;
+                text-align: center;
+            }
+            .review-row-card {
+                display: grid !important;
+                grid-template-columns: 44px 1fr !important;
+                grid-template-areas: 
+                    "avatar content"
+                    "actions actions" !important;
+                gap: 12px !important;
+                padding: 1rem !important;
+            }
+            .review-avatar {
+                grid-area: avatar !important;
+            }
+            .review-content-body {
+                grid-area: content !important;
+            }
+            .review-actions-container {
+                grid-area: actions !important;
+                display: flex !important;
+                gap: 8px !important;
+                width: 100% !important;
+                justify-content: space-between !important;
+                border-top: 1px solid var(--border);
+                padding-top: 12px !important;
+                margin-top: 4px !important;
+            }
+            .review-actions-container .action-form {
+                flex: 1 !important;
+                margin: 0 !important;
+            }
+            .review-actions-container .action-form button,
+            .review-actions-container button,
+            .review-actions-container .btn {
+                width: 100% !important;
+                padding: 10px 8px !important;
+                font-size: 0.8rem !important;
+                display: flex !important;
+                justify-content: center !important;
+                align-items: center !important;
+                margin: 0 !important;
+            }
+            .review-modal-panel {
+                width: 92% !important;
+                padding: 1.5rem !important;
+                margin: 0 16px !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .form-row-flex {
+                flex-direction: column !important;
+                gap: 12px !important;
+            }
+            .form-row-flex > .form-group {
+                width: 100% !important;
+            }
         }
     </style>
 
@@ -168,15 +270,15 @@
         </h3>
 
         {% for review in reviews %}
-        <div style="display: flex; gap: 1rem; align-items: flex-start; padding: 1.2rem; margin-bottom: 0.8rem; border-radius: 16px; border: 1px solid {% if review.is_featured %}rgba(240, 160, 48, 0.3){% else %}var(--border){% endif %}; background: {% if review.is_featured %}rgba(255, 245, 220, 0.3){% else %}rgba(255,255,255,0.3){% endif %}; transition: all 0.3s ease;">
+        <div class="review-row-card" style="display: flex; gap: 1rem; align-items: flex-start; padding: 1.2rem; margin-bottom: 0.8rem; border-radius: 16px; border: 1px solid {% if review.is_featured %}rgba(240, 160, 48, 0.3){% else %}var(--border){% endif %}; background: {% if review.is_featured %}rgba(255, 245, 220, 0.3){% else %}rgba(255,255,255,0.3){% endif %}; transition: all 0.3s ease;">
             
             <!-- Avatar -->
-            <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1rem; flex-shrink: 0;">
+            <div class="review-avatar" style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1rem; flex-shrink: 0;">
                 {{ review.customer_name[0] | upper }}
             </div>
 
             <!-- Content -->
-            <div style="flex: 1; min-width: 0;">
+            <div class="review-content-body" style="flex: 1; min-width: 0;">
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap;">
                     <span style="font-weight: 600; font-size: 0.95rem;">{{ review.customer_name }}</span>
                     {% if review.sentiment_label %}
@@ -222,8 +324,8 @@
             </div>
 
             <!-- Actions -->
-            <div style="display: flex; gap: 6px; flex-shrink: 0; align-items: center;">
-                <form method="POST" action="{{ url_for('admin_toggle_review', id=review.id) }}">
+            <div class="review-actions-container" style="display: flex; gap: 6px; flex-shrink: 0; align-items: center;">
+                <form class="action-form" method="POST" action="{{ url_for('admin_toggle_review', id=review.id) }}">
                     <button type="submit" class="btn btn-outline" style="padding: 8px 14px; font-size: 0.78rem; {% if review.is_featured %}background: rgba(240,160,48,0.1); border-color: rgba(240,160,48,0.3); color: #c08020;{% endif %}" title="{% if review.is_featured %}Remove from homepage{% else %}Feature on homepage{% endif %}">
                         {% if review.is_featured %}⭐ Unfeature{% else %}☆ Feature{% endif %}
                     </button>
@@ -231,7 +333,7 @@
                 <button onclick="openEditModal('{{ review.id }}', '{{ review.customer_name | replace("'", "\\'") }}', '{{ review.rating }}', '{{ review.occasion | replace("'", "\\'") if review.occasion else "" }}', '{{ review.review_text | replace("'", "\\'") | replace('\n', '\\n') }}')" class="btn btn-outline" style="padding: 8px 14px; font-size: 0.78rem;">
                     ✏️ Edit
                 </button>
-                <form method="POST" action="{{ url_for('admin_delete_review', id=review.id) }}" onsubmit="return confirm('Delete this review permanently?')">
+                <form class="action-form" method="POST" action="{{ url_for('admin_delete_review', id=review.id) }}" onsubmit="return confirm('Delete this review permanently?')">
                     <button type="submit" class="btn btn-outline" style="padding: 8px 12px; border-color: #e88; color: #c55;" title="Delete review">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     </button>
@@ -254,7 +356,7 @@
 
 <!-- Add Custom Review Modal -->
 <div id="addReviewModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-    <div class="glass-panel" style="width: 100%; max-width: 500px; padding: 2rem; position: relative; animation: slideInUp 0.3s ease;">
+    <div class="glass-panel review-modal-panel" style="width: 100%; max-width: 500px; padding: 2rem; position: relative; animation: slideInUp 0.3s ease;">
         <button type="button" onclick="document.getElementById('addReviewModal').style.display='none'" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
         <h3 class="elegant-title" style="font-size: 1.5rem; margin-bottom: 1.5rem;">Add Custom Review</h3>
         
@@ -264,7 +366,7 @@
                 <input type="text" name="customer_name" class="input-field" required placeholder="e.g. Jane Doe">
             </div>
             
-            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+            <div class="form-row-flex" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
                 <div class="form-group" style="flex: 1;">
                     <label class="form-label">Rating</label>
                     <select name="rating" class="input-field" required>
@@ -302,7 +404,7 @@
 
 <!-- Edit Review Modal -->
 <div id="editReviewModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-    <div class="glass-panel" style="width: 100%; max-width: 500px; padding: 2rem; position: relative; animation: slideInUp 0.3s ease;">
+    <div class="glass-panel review-modal-panel" style="width: 100%; max-width: 500px; padding: 2rem; position: relative; animation: slideInUp 0.3s ease;">
         <button type="button" onclick="document.getElementById('editReviewModal').style.display='none'" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
         <h3 class="elegant-title" style="font-size: 1.5rem; margin-bottom: 1.5rem;">Edit Review</h3>
         
@@ -312,7 +414,7 @@
                 <input type="text" id="edit_customer_name" name="customer_name" class="input-field" required>
             </div>
             
-            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+            <div class="form-row-flex" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
                 <div class="form-group" style="flex: 1;">
                     <label class="form-label">Rating</label>
                     <select id="edit_rating" name="rating" class="input-field" required>

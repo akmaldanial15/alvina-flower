@@ -1,0 +1,615 @@
+/* ═══════════════════════════════════════════
+   TRACK ORDER PAGE — PREMIUM REDESIGN
+   ═══════════════════════════════════════════ */
+
+.track-page {
+  padding: 5rem 1.5rem 4rem;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.track-hero {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  animation: trackFadeUp 0.6s ease-out;
+}
+
+.track-hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+}
+
+.track-hero p {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+/* Search Form */
+.track-search {
+  animation: trackFadeUp 0.6s ease-out 0.1s both;
+}
+
+.track-search-inner {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.track-search-inner .input-field {
+  flex: 1;
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 2px;
+  font-size: 0.95rem;
+}
+
+.track-search-inner .btn {
+  white-space: nowrap;
+  padding: 12px 28px;
+}
+
+/* Status Badge */
+.track-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  animation: trackPulseIn 0.5s ease-out;
+}
+
+.track-status-badge.processing {
+  background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+  color: #e65100;
+  border: 1px solid rgba(230, 81, 0, 0.15);
+}
+
+.track-status-badge.shipped {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  color: #0d47a1;
+  border: 1px solid rgba(13, 71, 161, 0.15);
+}
+
+.track-status-badge.delivered {
+  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+  color: #1b5e20;
+  border: 1px solid rgba(27, 94, 32, 0.15);
+}
+
+/* Order ID Header */
+.track-order-id-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.track-order-id {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-main);
+}
+
+.track-copy-btn {
+  background: rgba(248, 200, 216, 0.15);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  color: var(--accent);
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.track-copy-btn:hover {
+  background: rgba(248, 200, 216, 0.3);
+  transform: scale(1.05);
+}
+
+.track-copy-btn.copied {
+  background: rgba(76, 175, 80, 0.1);
+  border-color: rgba(76, 175, 80, 0.3);
+  color: #2e7d32;
+}
+
+/* Status Message */
+.track-status-message {
+  text-align: center;
+  padding: 1.2rem;
+  margin: 0 0 1.5rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(248, 200, 216, 0.08), rgba(255, 228, 240, 0.12));
+  border: 1px solid rgba(248, 200, 216, 0.15);
+}
+
+.track-status-message .status-emoji {
+  font-size: 1.8rem;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.track-status-message .status-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.4;
+}
+
+/* Visual Timeline */
+.track-timeline {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0;
+  padding: 1.5rem 0.5rem;
+  position: relative;
+}
+
+.track-timeline-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.track-timeline-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+  position: relative;
+  transition: all 0.4s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+}
+
+.track-timeline-icon.active {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  box-shadow: 0 6px 20px rgba(216, 167, 177, 0.4);
+  animation: trackTimelinePop 0.5s ease-out;
+}
+
+.track-timeline-icon.inactive {
+  background: rgba(248, 200, 216, 0.08);
+  border: 2px dashed var(--border);
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.track-timeline-icon.current {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  box-shadow: 0 6px 20px rgba(216, 167, 177, 0.5);
+  animation: trackTimelinePulse 2s ease-in-out infinite;
+}
+
+.track-timeline-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-main);
+  text-align: center;
+}
+
+.track-timeline-label.inactive {
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.track-timeline-connector {
+  position: absolute;
+  top: 26px;
+  left: calc(50% + 26px);
+  width: calc(100% - 52px);
+  height: 3px;
+  border-radius: 3px;
+  z-index: 0;
+}
+
+.track-timeline-connector.active {
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+}
+
+.track-timeline-connector.inactive {
+  background: var(--border);
+  opacity: 0.4;
+}
+
+/* Order Summary Card */
+.track-product-card {
+  display: flex;
+  gap: 1.2rem;
+  align-items: center;
+  padding: 1.2rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border);
+  text-align: left;
+  animation: trackFadeUp 0.5s ease-out 0.3s both;
+}
+
+.track-product-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.track-product-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.track-product-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-product-category {
+  font-size: 0.72rem;
+  color: var(--accent);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+
+.track-product-price {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* WhatsApp CTA */
+.track-whatsapp-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #25d366, #128c48);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.25);
+}
+
+.track-whatsapp-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(37, 211, 102, 0.35);
+}
+
+.track-whatsapp-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+
+/* Not Found State */
+.track-not-found {
+  text-align: center;
+  padding: 3rem 2rem;
+  animation: trackFadeUp 0.5s ease-out;
+}
+
+.track-not-found-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.track-not-found h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-main);
+}
+
+.track-not-found p {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin-bottom: 0.3rem;
+}
+
+.track-not-found-tips {
+  margin-top: 1.5rem;
+  text-align: left;
+  background: rgba(255, 243, 224, 0.4);
+  border: 1px solid rgba(255, 183, 77, 0.2);
+  border-radius: 14px;
+  padding: 1.2rem 1.5rem;
+}
+
+.track-not-found-tips h4 {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #e65100;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.track-not-found-tips li {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+  padding-left: 0.5rem;
+}
+
+/* Section Panels */
+.track-section {
+  margin-bottom: 1.5rem;
+}
+
+.track-section-anim {
+  animation: trackFadeUp 0.5s ease-out both;
+}
+
+.track-footer-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 2.5rem;
+  animation: trackFadeUp 0.6s ease-out 0.6s both;
+}
+
+.track-date {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+/* Animations */
+@keyframes trackFadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes trackPulseIn {
+  0% { opacity: 0; transform: scale(0.8); }
+  60% { transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes trackTimelinePop {
+  0% { transform: scale(0.5); opacity: 0; }
+  70% { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes trackTimelinePulse {
+  0%, 100% { box-shadow: 0 6px 20px rgba(216, 167, 177, 0.4); }
+  50% { box-shadow: 0 6px 30px rgba(216, 167, 177, 0.7); }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .track-page { padding: 4rem 1rem 3rem; }
+  .track-hero h1 { font-size: 2rem; }
+  .track-search-inner { flex-direction: column; }
+  .track-search-inner .btn { width: 100%; }
+  .track-timeline-icon { width: 42px; height: 42px; font-size: 1.1rem; }
+  .track-timeline-connector { top: 21px; left: calc(50% + 21px); width: calc(100% - 42px); }
+  .track-product-card { flex-direction: column; text-align: center; }
+  .track-footer-actions { flex-direction: column; }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   PRODUCT DETAIL - PROMOTIONAL COMPONENTS 
+   ════════════════════════════════════════════════════════════════ */
+.pd-promo-banner {
+  position: relative;
+  background: linear-gradient(135deg, rgba(234, 159, 185, 0.1), rgba(248, 200, 216, 0.25));
+  border: 1px solid rgba(234, 159, 185, 0.4);
+  border-radius: 16px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: pdPromoReveal 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.pd-promo-banner-glow {
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  animation: pdPromoGlow 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pdPromoReveal {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pdPromoGlow {
+  0% { left: -100%; }
+  50%, 100% { left: 200%; }
+}
+
+.pd-promo-banner-icon {
+  font-size: 1.5rem;
+  animation: bouncePromoIcon 2s infinite ease-in-out;
+}
+
+@keyframes bouncePromoIcon {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.pd-promo-banner-text {
+  font-size: 0.9rem;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.pd-promo-banner-code {
+  font-family: 'Courier New', monospace;
+  font-weight: 800;
+  color: #b5446e;
+  background: rgba(255,255,255,0.8);
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.pd-promo-banner-desc {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* Price modifications */
+.pd-price-original {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 0.2rem;
+}
+
+.pd-promo-save-badge {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  animation: pulseSaveBadge 2s infinite;
+}
+
+@keyframes pulseSaveBadge {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+  50% { transform: scale(1.05); box-shadow: 0 0 0 4px rgba(34, 197, 94, 0); }
+}
+
+.pd-price-pop {
+  animation: pricePop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes pricePop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); color: #b5446e; }
+  100% { transform: scale(1); }
+}
+
+/* Promo Input styling */
+.pd-promo-input-section {
+  margin-bottom: 2.5rem;
+}
+
+.pd-promo-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.7);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 4px;
+  transition: all 0.3s ease;
+}
+
+.pd-promo-input-wrap:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 4px 15px rgba(248,200,216,0.25);
+  background: #fff;
+}
+
+.pd-promo-input-icon {
+  padding: 0 12px;
+  color: var(--text-muted);
+  display: flex;
+}
+
+.pd-promo-input-wrap input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-main);
+  outline: none;
+}
+
+.pd-promo-apply-btn {
+  background: var(--text-main);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pd-promo-apply-btn:hover:not(:disabled) {
+  background: var(--accent);
+  transform: translateY(-1px);
+}
+
+.pd-promo-message {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  min-height: 20px;
+}
+
+.pd-promo-success {
+  color: #16a34a;
+  animation: fadeIn 0.4s ease;
+}
+
+.pd-promo-error {
+  color: #dc2626;
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}

@@ -1,0 +1,258 @@
+.promo-page { position: relative; min-height: 100vh; padding-bottom: 4rem; }
+
+/* Particles */
+.promo-particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+.promo-particle {
+    position: absolute;
+    left: var(--x); top: var(--y);
+    width: var(--size); height: var(--size);
+    background: rgba(248,200,216,0.4);
+    border-radius: 50%; opacity: 0;
+    animation: promoFloat var(--dur) ease-in-out var(--delay) infinite;
+}
+@keyframes promoFloat {
+    0%, 100% { opacity: 0; transform: translateY(0) scale(0.5); }
+    25% { opacity: 0.8; }
+    50% { opacity: 0.4; transform: translateY(-40px) scale(1.1); }
+    75% { opacity: 0.6; }
+}
+
+/* Hero */
+.promo-hero {
+    position: relative; text-align: center;
+    padding: 5rem 2rem 3rem; overflow: hidden;
+    background: linear-gradient(170deg, #fff 0%, #fdf5f7 40%, #fce8ef 70%, #fdf5f7 100%);
+}
+.promo-hero-orb {
+    position: absolute; border-radius: 50%; pointer-events: none;
+    animation: promoOrbFloat 8s ease-in-out infinite;
+}
+.promo-hero-orb-1 { width: 300px; height: 300px; top: -100px; right: -80px; background: radial-gradient(circle, rgba(248,200,216,0.2), transparent); }
+.promo-hero-orb-2 { width: 200px; height: 200px; bottom: -60px; left: -40px; background: radial-gradient(circle, rgba(216,167,177,0.15), transparent); animation-delay: 3s; }
+@keyframes promoOrbFloat { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(20px,-15px) scale(1.1); } }
+
+.promo-hero-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+.promo-hero-badge {
+    display: inline-block; padding: 8px 22px; border-radius: 50px;
+    background: rgba(248,200,216,0.15); border: 1px solid rgba(248,200,216,0.3);
+    font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; color: var(--accent);
+    margin-bottom: 1rem; animation: promoBadgePop 0.8s ease-out;
+}
+@keyframes promoBadgePop { from { opacity: 0; transform: scale(0.8) translateY(10px); } }
+.promo-hero-title { font-size: 3.5rem; margin-bottom: 1rem; }
+.promo-hero-subtitle { color: var(--text-muted); font-size: 1.1rem; line-height: 1.7; }
+
+/* Promo Section */
+.promo-section { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+.promo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 2rem; }
+
+.promo-card {
+    position: relative; overflow: hidden;
+    border-radius: 28px; padding: 2rem;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1.5px solid var(--border);
+    box-shadow: 0 8px 30px rgba(200,146,159,0.08);
+    transition: all 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+    animation: promoCardIn 0.7s ease-out forwards;
+    animation-delay: calc(var(--ci) * 0.12s); opacity: 0;
+}
+@keyframes promoCardIn { from { opacity: 0; transform: translateY(40px) scale(0.96); } to { opacity: 1; transform: none; } }
+.promo-card:hover { transform: translateY(-8px); box-shadow: 0 24px 60px rgba(200,146,159,0.18); border-color: var(--primary); }
+.promo-card:hover .promo-card-liquid { opacity: 1; transform: scale(1.4); }
+
+.promo-card-liquid {
+    position: absolute; bottom: -80px; right: -80px;
+    width: 250px; height: 250px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(248,200,216,0.25), transparent 70%);
+    opacity: 0; transition: all 1s cubic-bezier(0.25,0.46,0.45,0.94);
+    pointer-events: none; z-index: 0;
+}
+
+.promo-card-status {
+    display: inline-block; padding: 5px 14px; border-radius: 50px;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 1rem;
+}
+.promo-status-active { background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: #065f46; }
+.promo-status-scheduled { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #78350f; }
+
+.promo-card-body { position: relative; z-index: 1; }
+.promo-card-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 600; margin-bottom: 0.5rem; }
+.promo-card-desc { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.2rem; }
+
+.promo-card-discount-display { display: flex; align-items: baseline; gap: 10px; margin-bottom: 1rem; }
+.promo-big-discount {
+    font-size: 3rem; font-weight: 800; font-family: 'Playfair Display', serif; line-height: 1;
+    background: linear-gradient(135deg, #b5446e, #d4728e, #f1a9c3);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.promo-discount-text { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+
+/* Countdown Timer */
+.promo-countdown {
+    position: relative;
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px; border-radius: 14px;
+    background: linear-gradient(135deg, rgba(239,68,68,0.04), rgba(245,158,11,0.06));
+    border: 1.5px solid rgba(239,68,68,0.15);
+    margin-bottom: 1.2rem;
+    overflow: hidden;
+}
+.promo-countdown-icon { 
+    color: #dc2626; display: flex; align-items: center;
+    animation: countdownPulse 2s ease-in-out infinite;
+}
+@keyframes countdownPulse { 0%,100%{opacity:0.6;transform:scale(1)} 50%{opacity:1;transform:scale(1.1)} }
+.promo-countdown-timer { display: flex; flex-direction: column; }
+.promo-cd-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); font-weight: 600; }
+.promo-cd-value { font-size: 0.92rem; font-weight: 700; color: #dc2626; font-family: 'Courier New', monospace; letter-spacing: 0.05em; }
+.promo-countdown-pulse {
+    position: absolute; right: -20px; top: -20px;
+    width: 60px; height: 60px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(239,68,68,0.1), transparent);
+    animation: countdownGlow 3s ease-in-out infinite;
+}
+@keyframes countdownGlow { 0%,100%{transform:scale(1);opacity:0.3} 50%{transform:scale(1.5);opacity:0.8} }
+
+/* Promo Code */
+.promo-code-container {
+    display: flex; align-items: stretch; gap: 0; margin-bottom: 1.2rem;
+    border-radius: 14px; overflow: hidden;
+    border: 2px dashed rgba(181,68,110,0.3);
+    background: linear-gradient(135deg, rgba(253,245,247,0.8), rgba(248,200,216,0.1));
+    transition: all 0.3s ease;
+}
+.promo-code-container:hover { border-color: rgba(181,68,110,0.5); box-shadow: 0 4px 20px rgba(181,68,110,0.1); }
+.promo-code-display {
+    flex: 1; padding: 1rem 1.2rem;
+    display: flex; flex-direction: column; gap: 2px;
+}
+.promo-code-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); font-weight: 600; }
+.promo-code-value { font-size: 1.4rem; font-weight: 800; font-family: 'Courier New', monospace; color: #b5446e; letter-spacing: 0.15em; }
+.promo-copy-btn {
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 1.2rem; background: linear-gradient(135deg, #b5446e, #d4728e);
+    color: white; border: none; cursor: pointer;
+    transition: all 0.3s ease; min-width: 50px;
+}
+.promo-copy-btn:hover { filter: brightness(1.1); }
+.promo-copy-btn.copied { background: linear-gradient(135deg, #16a34a, #22c55e); }
+
+/* Meta pills */
+.promo-card-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.2rem; }
+.promo-meta-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 5px 12px; border-radius: 50px;
+    font-size: 0.7rem; font-weight: 500;
+    background: rgba(248,200,216,0.1); border: 1px solid rgba(248,200,216,0.25);
+    color: var(--text-muted);
+}
+.promo-meta-date { color: #d97706; background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.2); }
+.promo-meta-products { color: #7c3aed; background: rgba(124,58,237,0.06); border-color: rgba(124,58,237,0.2); }
+
+/* Sample Products */
+.promo-sample-products { display: flex; gap: 8px; margin-bottom: 1.5rem; }
+.promo-sample-product {
+    width: 52px; height: 52px; border-radius: 14px; overflow: hidden;
+    border: 2px solid var(--border); transition: all 0.3s ease;
+}
+.promo-sample-product:hover { transform: scale(1.15); border-color: var(--primary); box-shadow: 0 4px 12px rgba(248,200,216,0.3); }
+.promo-sample-product img { width: 100%; height: 100%; object-fit: cover; }
+.promo-sample-more {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(248,200,216,0.15); border: 2px solid var(--border);
+    font-size: 0.75rem; font-weight: 700; color: var(--accent);
+    text-decoration: none; transition: all 0.3s ease;
+}
+.promo-sample-more:hover { background: rgba(248,200,216,0.3); transform: scale(1.1); }
+
+/* Actions row */
+.promo-actions-row {
+    display: flex; align-items: center; gap: 10px;
+}
+
+/* Shop btn */
+.promo-shop-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 28px; border-radius: 50px;
+    background: linear-gradient(135deg, #f8c8d8, #f1a9c3);
+    color: white; font-weight: 600; font-size: 0.9rem;
+    text-decoration: none; transition: all 0.4s ease;
+    box-shadow: 0 4px 15px rgba(248,200,216,0.3);
+    flex: 1;
+    justify-content: center;
+}
+.promo-shop-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(241,169,195,0.4); }
+
+/* WhatsApp Share btn */
+.promo-share-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 46px; height: 46px; border-radius: 50%;
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    color: white; border: none; cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(37,211,102,0.3);
+    flex-shrink: 0;
+}
+.promo-share-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 20px rgba(37,211,102,0.4); }
+
+/* Empty */
+.promo-empty { text-align: center; padding: 4rem 2rem; }
+.promo-empty-icon { font-size: 4rem; display: block; margin-bottom: 1rem; }
+.promo-empty h2 { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 0.5rem; }
+.promo-empty p { color: var(--text-muted); }
+
+@media (max-width: 768px) {
+    .promo-hero-title { font-size: 2.2rem; }
+    .promo-grid { grid-template-columns: 1fr; }
+    .promo-big-discount { font-size: 2.2rem; }
+}
+
+/* ===== MOBILE PORT-TARGET ENHANCEMENTS FOR PROMOTIONS ===== */
+@media (max-width: 520px) {
+    .promo-hero {
+        padding: 3.5rem 1rem 2rem;
+    }
+    .promo-hero-title {
+        font-size: 1.8rem;
+    }
+    .promo-hero-subtitle {
+        font-size: 0.9rem;
+    }
+    .promo-card {
+        padding: 1.2rem;
+        border-radius: 20px;
+    }
+    .promo-card-title {
+        font-size: 1.3rem;
+    }
+    .promo-card-desc {
+        font-size: 0.85rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+    .promo-big-discount {
+        font-size: 2rem;
+    }
+    .promo-code-value {
+        font-size: 1.15rem;
+        letter-spacing: 0.1em;
+    }
+    .promo-code-display {
+        padding: 0.8rem 1rem;
+    }
+    .promo-copy-btn {
+        padding: 0 1rem;
+        min-width: 44px;
+    }
+    .promo-shop-btn {
+        padding: 10px 20px;
+        font-size: 0.85rem;
+    }
+    .promo-share-btn {
+        width: 40px;
+        height: 40px;
+    }
+}
