@@ -1346,8 +1346,12 @@
   }
 
   /* Ticker */
-  .hp-promo-dots, .hp-promo-view-all {
-    display: none;
+  .hp-promo-ticker {
+    min-height: 80px !important;
+    padding: 10px 1rem !important;
+  }
+  .hp-promo-dots, .hp-promo-view-all, .hp-promo-sparkle {
+    display: none !important;
   }
   .hp-promo-text {
     display: flex;
